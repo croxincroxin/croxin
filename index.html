@@ -650,7 +650,7 @@ Roblox Developer • Web Designer • Community Manager
 
 <!-- GÖRÜNTÜLENME SAYACI -->
 <div class="views-counter">
-    <i class="fas fa-user-check"></i> <span id="visitCount">...</span>
+    <i class="fas fa-user-check"></i> Siz <span id="visitCount">...</span>. ziyaretçisiniz
 </div>
 
 
@@ -811,33 +811,34 @@ Topluluk ve sunucu projeleri burada gösterilecek.
 
 
 <script>
-// TEKİL ZİYARETÇİ SAYACI (YENİLEMELERDE ARTMAMASI İÇİN)
+// TEKİL VE KALICI ZİYARETÇİ SAYACI
 async function updateVisitCount() {
     const counterEl = document.getElementById('visitCount');
-    const namespace = "croxincroxin.github.io";
-    const key = "unique_visitors_v1";
+    const namespace = "croxin_official_site";
+    const key = "croxin_unique_v10";
 
-    const hasVisited = localStorage.getItem('croxin_visited');
+    let userNumber = localStorage.getItem('croxin_visitor_no');
 
-    try {
-        let response;
-        if (!hasVisited) {
-            // İlk kez giriyorsa sayacı artır
-            response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up?t=${Date.now()}`);
-            localStorage.setItem('croxin_visited', 'true');
-        } else {
-            // Daha önce girdiyse sadece sayıyı oku (artırma yapma)
-            response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}?t=${Date.now()}`);
-        }
-
-        const data = await response.json();
-        if (data && data.count) {
-            counterEl.innerText = data.count;
-        } else {
+    if (userNumber) {
+        // Zaten ziyaret ettiyse kayıtlı sırasını yazdır
+        counterEl.innerText = userNumber;
+    } else {
+        // İlk kez giriyorsa sunucudan yeni sıra numarası al ve kaydet
+        try {
+            const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up?t=${Date.now()}`);
+            const data = await response.json();
+            
+            if (data && data.count) {
+                userNumber = data.count;
+                localStorage.setItem('croxin_visitor_no', userNumber);
+                counterEl.innerText = userNumber;
+            } else {
+                counterEl.innerText = "1";
+            }
+        } catch (error) {
+            console.error("Sayaç yükleme hatası:", error);
             counterEl.innerText = "1";
         }
-    } catch (error) {
-        counterEl.innerText = "1";
     }
 }
 updateVisitCount();
