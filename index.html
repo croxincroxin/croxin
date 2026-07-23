@@ -718,9 +718,17 @@ transition: 0.3s;
 box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
 }
 
-.send-btn:hover {
+.send-btn:hover:not(:disabled) {
 transform: translateY(-3px);
 box-shadow: 0 0 30px var(--primary-color);
+}
+
+.send-btn:disabled {
+background: rgba(255, 255, 255, 0.1);
+color: rgba(255, 255, 255, 0.4);
+box-shadow: none;
+cursor: not-allowed;
+transform: none;
 }
 
 /* MODAL DETAY PENCERESİ */
@@ -1161,7 +1169,7 @@ box-shadow: 0 0 8px var(--primary-color);
                 <label>Mesajınız</label>
                 <textarea id="contactMessage" rows="4" placeholder="Projeniz hakkında detaylar verin..." required></textarea>
             </div>
-            <button type="submit" class="send-btn"><i class="fas fa-paper-plane"></i> Mesajı Gönder</button>
+            <button type="submit" id="submitBtn" class="send-btn"><i class="fas fa-paper-plane"></i> Mesajı Gönder</button>
         </form>
     </div>
 </section>
@@ -1372,11 +1380,24 @@ document.querySelectorAll('.faq-question').forEach(q => {
     });
 });
 
-// 9. İLETİŞİM FORMU (CORS Korumalı Discord Webhook Entegrasyonu)
+// 9. İLETİŞİM FORMU (CORS Korumalı Proxy + 120 Saniye Cooldown / Süre Sınırı)
 async function handleContact(e) {
     e.preventDefault();
     
-    const webhookUrl = "https://discord.com/api/webhooks/1529948852797440220/AsmvI5U0CsnKSF1LhV_OyYb3pM7f1IkPFc48CSjJgbDtV0IBAcjhiX_9MqvIlupl4g0I"; 
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Sayfa yenilense bile süreyi kontrol etmek için localStorage kullanıyoruz
+    const lastSendTime = localStorage.getItem('croxin_last_msg_time');
+    const cooldownTime = 120 * 1000; // 120 Saniye (milisaniye cinsinden)
+    const now = Date.now();
+
+    if (lastSendTime && (now - lastSendTime < cooldownTime)) {
+        const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
+        alert(`Çok sık mesaj gönderiyorsun! Lütfen tekrar göndermek için ${remainingSeconds} saniye bekle.`);
+        return;
+    }
+
+    const originalWebhookUrl = "https://discord.com/api/webhooks/1529948852797440220/AsmvI5U0CsnKSF1LhV_OyYb3pM7f1IkPFc48CSjJgbDtV0IBAcjhiX_9MqvIlupl4g0I"; 
 
     const name = document.getElementById('contactName').value;
     const info = document.getElementById('contactInfo').value;
@@ -1397,22 +1418,60 @@ async function handleContact(e) {
     };
 
     try {
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(webhookUrl)}`;
+        const proxyWebhookUrl = originalWebhookUrl.replace("discord.com", "webhook.lewisakura.moe");
         
-        await fetch(proxyUrl, {
+        const response = await fetch(proxyWebhookUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        alert("Mesajın başarıyla Discord kanalına iletildi!");
-        e.target.reset();
+        if (response.ok) {
+            alert("Mesajın başarıyla Discord kanalına iletildi!");
+            e.target.reset();
+            
+            // Gönderim zamanını kaydet ve buton sayacını başlat
+            localStorage.setItem('croxin_last_msg_time', Date.now());
+            startCooldownTimer(120);
+        } else {
+            alert("Mesaj gönderilemedi, lütfen daha sonra tekrar dene.");
+        }
         
     } catch (err) {
         console.error(err);
         alert("Bağlantı hatası oluştu!");
     }
 }
+
+// 120 Saniyelik Buton Geri Sayım Fonksiyonu
+function startCooldownTimer(seconds) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    
+    let timeLeft = seconds;
+    const timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            submitBtn.innerHTML = `<i class="fas fa-clock"></i> Yeni Mesaj İçin Bekle (${timeLeft}s)`;
+            timeLeft--;
+        } else {
+            clearInterval(timerInterval);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
+        }
+    }, 1000);
+}
+
+// Sayfa yüklendiğinde eğer hala süre varsa butonu kilitli tut
+window.addEventListener('DOMContentLoaded', () => {
+    const lastSendTime = localStorage.getItem('croxin_last_msg_time');
+    const cooldownTime = 120 * 1000;
+    const now = Date.now();
+    
+    if (lastSendTime && (now - lastSendTime < cooldownTime)) {
+        const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
+        startCooldownTimer(remainingSeconds);
+    }
+});
 
 // 10. MENÜ KONTROLÜ
 const sideMenu = document.getElementById('sideMenu');
