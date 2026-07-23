@@ -28,7 +28,7 @@ body{
 background:#050816;
 color:white;
 overflow-x:hidden;
-padding-bottom: 90px; /* Müzik çalar için alt boşluk */
+padding-bottom: 90px;
 }
 
 
@@ -51,6 +51,110 @@ z-index:-1;
 
 }
 
+
+/* SAĞ ÜST AÇILIR MENÜ VE HAMBURGER BUTONU */
+
+.menu-btn {
+position: fixed;
+top: 25px;
+right: 25px;
+width: 50px;
+height: 50px;
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 12px;
+backdrop-filter: blur(10px);
+color: #fff;
+font-size: 20px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 10001;
+transition: 0.3s;
+}
+
+.menu-btn:hover {
+background: #00bfff;
+color: #000;
+box-shadow: 0 0 20px #00bfff;
+transform: scale(1.05);
+}
+
+.side-menu {
+position: fixed;
+top: 0;
+right: -320px;
+width: 300px;
+height: 100vh;
+background: rgba(5, 8, 22, 0.95);
+backdrop-filter: blur(25px);
+border-left: 1px solid rgba(255, 255, 255, 0.1);
+box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+z-index: 10000;
+padding: 80px 30px 30px 30px;
+display: flex;
+flex-direction: column;
+gap: 20px;
+transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.side-menu.active {
+right: 0;
+}
+
+.close-btn {
+position: absolute;
+top: 25px;
+right: 25px;
+background: none;
+border: none;
+color: rgba(255, 255, 255, 0.7);
+font-size: 24px;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.close-btn:hover {
+color: #00bfff;
+transform: rotate(90deg);
+}
+
+.menu-title {
+font-size: 14px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: #00bfff;
+margin-bottom: 10px;
+font-weight: 600;
+}
+
+.side-menu a {
+color: #fff;
+text-decoration: none;
+font-size: 18px;
+font-weight: 500;
+opacity: 0.8;
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 10px;
+border-radius: 10px;
+transition: 0.3s;
+}
+
+.side-menu a:hover {
+opacity: 1;
+background: rgba(255, 255, 255, 0.08);
+color: #00bfff;
+padding-left: 18px;
+}
+
+.menu-divider {
+height: 1px;
+background: rgba(255, 255, 255, 0.1);
+margin: 10px 0;
+}
 
 
 /* Ana giriş */
@@ -288,7 +392,7 @@ opacity:.5;
 
 
 
-/* MÜZİK ÇALAR (MUSIC PLAYER) STİLLERİ */
+/* MÜZİK ÇALAR STİLLERİ */
 
 .music-player {
 position: fixed;
@@ -424,6 +528,25 @@ padding: 10px 15px;
 
 <body>
 
+<!-- HAMBURGER MENÜ BUTONU -->
+<button class="menu-btn" id="openMenuBtn"><i class="fas fa-bars"></i></button>
+
+<!-- SAĞDAN AÇILAN PANEL -->
+<div class="side-menu" id="sideMenu">
+    <button class="close-btn" id="closeMenuBtn"><i class="fas fa-times"></i></button>
+    
+    <div class="menu-title">Navigation</div>
+    <a href="#" onclick="toggleMenu()"><i class="fas fa-house"></i> Home</a>
+    <a href="#about" onclick="toggleMenu()"><i class="fas fa-user"></i> About</a>
+    <a href="#projects" onclick="toggleMenu()"><i class="fas fa-code"></i> Projects</a>
+    
+    <div class="menu-divider"></div>
+    
+    <div class="menu-title">Socials</div>
+    <a href="https://discord.com/users/1403418770009227387" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+    <a href="https://instagram.com/_gams1z" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+</div>
+
 
 <header>
 
@@ -458,7 +581,7 @@ Roblox Developer • Web Designer • Community Manager
 
 
 
-<section>
+<section id="about">
 
 
 <h2 class="title">
@@ -593,8 +716,20 @@ Topluluk ve sunucu projeleri burada gösterilecek.
 
 
 
-<!-- MÜZİK ÇALAR SCRIPT -->
 <script>
+// MENÜ AÇMA / KAPATMA SCRIPT'I
+const sideMenu = document.getElementById('sideMenu');
+const openMenuBtn = document.getElementById('openMenuBtn');
+const closeMenuBtn = document.getElementById('closeMenuBtn');
+
+function toggleMenu() {
+    sideMenu.classList.toggle('active');
+}
+
+openMenuBtn.addEventListener('click', toggleMenu);
+closeMenuBtn.addEventListener('click', toggleMenu);
+
+// MÜZİK ÇALAR SCRIPT
 const audio = document.getElementById('audioPlayer');
 const playBtn = document.getElementById('playBtn');
 const playIcon = document.getElementById('playIcon');
@@ -622,7 +757,6 @@ audio.addEventListener('timeupdate', () => {
         const percent = (audio.currentTime / audio.duration) * 100;
         progressFill.style.width = `${percent}%`;
         
-        // Süre formatlama
         let curMin = Math.floor(audio.currentTime / 60);
         let curSec = Math.floor(audio.currentTime % 60);
         if (curSec < 10) curSec = `0${curSec}`;
