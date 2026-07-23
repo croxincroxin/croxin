@@ -1372,11 +1372,48 @@ document.querySelectorAll('.faq-question').forEach(q => {
     });
 });
 
-// 9. İLETİŞİM FORMU SİMÜLASYONU
-function handleContact(e) {
+// 9. İLETİŞİM FORMU (DISCORD WEBHOOK ENTEGRELİ)
+async function handleContact(e) {
     e.preventDefault();
-    alert('Mesajınız başarıyla gönderildi! Croxin en kısa sürede sizinle iletişime geçecektir.');
-    e.target.reset();
+    
+    // BURAYA KENDİ DISCORD WEBHOOK LINKINI YAPIŞTIR:
+    const webhookUrl = "BURAYA_DISCORD_WEBHOOK_LINKINI_YAPISTIR"; 
+
+    const name = document.getElementById('contactName').value;
+    const info = document.getElementById('contactInfo').value;
+    const message = document.getElementById('contactMessage').value;
+
+    const payload = {
+        embeds: [{
+            title: "📩 Web Siteden Yeni İletişim Mesajı!",
+            color: 3447003, // Mavi/Mor Neon Renk
+            fields: [
+                { name: "👤 Gönderen Adı / Rumuz", value: name, inline: true },
+                { name: "💬 Discord / E-Posta", value: info, inline: true },
+                { name: "📝 Mesaj", value: message }
+            ],
+            footer: { text: "Croxin Web Portfolyo Formu" },
+            timestamp: new Date()
+        }]
+    };
+
+    try {
+        const response = await fetch(webhookUrl, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            alert("Mesajın başarıyla Discord kanalına iletildi!");
+            e.target.reset();
+        } else {
+            alert("Mesaj gönderilirken bir hata oluştu. Lütfen Webhook URL'sini kontrol edin.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Bağlantı hatası oluştu!");
+    }
 }
 
 // 10. MENÜ KONTROLÜ
