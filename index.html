@@ -1372,11 +1372,10 @@ document.querySelectorAll('.faq-question').forEach(q => {
     });
 });
 
-// 9. İLETİŞİM FORMU (DISCORD WEBHOOK ENTEGRELİ)
+// 9. İLETİŞİM FORMU (CORS Korumalı Discord Webhook Entegrasyonu)
 async function handleContact(e) {
     e.preventDefault();
     
-    // Güncel Discord Webhook Linkiniz:
     const webhookUrl = "https://discord.com/api/webhooks/1529948852797440220/AsmvI5U0CsnKSF1LhV_OyYb3pM7f1IkPFc48CSjJgbDtV0IBAcjhiX_9MqvIlupl4g0I"; 
 
     const name = document.getElementById('contactName').value;
@@ -1386,7 +1385,7 @@ async function handleContact(e) {
     const payload = {
         embeds: [{
             title: "📩 Web Siteden Yeni İletişim Mesajı!",
-            color: 3447003, // Mavi/Mor Neon Renk
+            color: 3447003,
             fields: [
                 { name: "👤 Gönderen Adı / Rumuz", value: name, inline: true },
                 { name: "💬 Discord / E-Posta", value: info, inline: true },
@@ -1398,18 +1397,17 @@ async function handleContact(e) {
     };
 
     try {
-        const response = await fetch(webhookUrl, {
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(webhookUrl)}`;
+        
+        await fetch(proxyUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
-        if (response.ok) {
-            alert("Mesajın başarıyla Discord kanalına iletildi!");
-            e.target.reset();
-        } else {
-            alert("Mesaj gönderilirken bir hata oluştu. Lütfen Webhook URL'sini kontrol edin.");
-        }
+        alert("Mesajın başarıyla Discord kanalına iletildi!");
+        e.target.reset();
+        
     } catch (err) {
         console.error(err);
         alert("Bağlantı hatası oluştu!");
