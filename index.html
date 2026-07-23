@@ -1,157 +1,443 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Oyunum - Tanıtım Sitesi</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
 
-        body {
-            background-color: #0f1219;
-            color: #ffffff;
-            text-align: center;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        /* Üst Başlık (Hero) Alanı */
-        .hero {
-            background: linear-gradient(rgba(15, 18, 25, 0.8), rgba(15, 18, 25, 1)), 
-                        url('https://images.rbxcdn.com/f63df0b33e215451a5c619cb246d8881.jpg') center/cover;
-            padding: 100px 20px 80px;
-        }
+<title>Croxin | Developer</title>
 
-        .hero h1 {
-            font-size: 3rem;
-            color: #00a2ff;
-            text-shadow: 0 0 15px rgba(0, 162, 255, 0.6);
-            margin-bottom: 15px;
-        }
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600;800&display=swap" rel="stylesheet">
 
-        .hero p {
-            font-size: 1.2rem;
-            color: #ccc;
-            max-width: 600px;
-            margin: 0 auto 30px;
-        }
+<style>
 
-        /* Oyna Butonu */
-        .play-btn {
-            display: inline-block;
-            background-color: #00e676;
-            color: #000;
-            font-size: 1.4rem;
-            font-weight: bold;
-            padding: 16px 40px;
-            border-radius: 50px;
-            text-decoration: none;
-            box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
-            transition: all 0.3s ease;
-        }
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+}
 
-        .play-btn:hover {
-            transform: scale(1.08);
-            background-color: #00c853;
-            box-shadow: 0 0 30px rgba(0, 230, 118, 0.8);
-        }
+body{
+background:#050816;
+color:white;
+overflow-x:hidden;
+}
 
-        /* Özellikler Bölümü */
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 60px 20px;
-        }
 
-        .section-title {
-            font-size: 2rem;
-            margin-bottom: 40px;
-            color: #00a2ff;
-        }
+/* Arka plan ışıkları */
 
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
+body:before{
 
-        .feature-card {
-            background: #1a1f2c;
-            border: 1px solid #2a3245;
-            border-radius: 12px;
-            padding: 25px;
-            width: 280px;
-            text-align: left;
-        }
+content:"";
 
-        .feature-card h3 {
-            color: #00e676;
-            margin-bottom: 10px;
-        }
+position:fixed;
 
-        .feature-card p {
-            color: #aaa;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
+width:100%;
+height:100%;
 
-        /* Alt Bilgi / Sosyal Medya */
-        footer {
-            background-color: #080a0e;
-            padding: 30px 20px;
-            color: #666;
-            font-size: 0.9rem;
-            border-top: 1px solid #1a1f2c;
-        }
+background:
+radial-gradient(circle at top,#7b00ff55,transparent 40%),
+radial-gradient(circle at bottom,#00bfff44,transparent 40%);
 
-        footer a {
-            color: #00a2ff;
-            text-decoration: none;
-        }
-    </style>
+z-index:-1;
+
+}
+
+
+
+/* Ana giriş */
+
+header{
+
+height:100vh;
+
+display:flex;
+
+justify-content:center;
+
+align-items:center;
+
+text-align:center;
+
+flex-direction:column;
+
+}
+
+
+
+.logo{
+
+font-size:85px;
+
+font-weight:800;
+
+letter-spacing:10px;
+
+background:linear-gradient(90deg,#8a2be2,#00bfff);
+
+-webkit-background-clip:text;
+
+color:transparent;
+
+animation:glow 3s infinite;
+
+}
+
+
+
+@keyframes glow{
+
+50%{
+
+filter:drop-shadow(0 0 30px #00bfff);
+
+}
+
+}
+
+
+
+.profile{
+
+width:170px;
+
+height:170px;
+
+border-radius:50%;
+
+border:4px solid #00bfff;
+
+box-shadow:0 0 40px #00bfff;
+
+margin-bottom:30px;
+
+animation:float 4s infinite;
+
+}
+
+
+
+@keyframes float{
+
+50%{
+
+transform:translateY(-20px);
+
+}
+
+}
+
+
+
+.subtitle{
+
+font-size:22px;
+
+opacity:.8;
+
+margin-top:20px;
+
+}
+
+
+
+.buttons{
+
+margin-top:40px;
+
+}
+
+
+
+.btn{
+
+display:inline-block;
+
+padding:15px 35px;
+
+margin:10px;
+
+background:#00bfff;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:15px;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+
+
+.btn:hover{
+
+transform:scale(1.1);
+
+box-shadow:0 0 30px #00bfff;
+
+}
+
+
+
+/* Bölümler */
+
+
+section{
+
+padding:90px 10%;
+
+}
+
+
+
+.title{
+
+text-align:center;
+
+font-size:45px;
+
+margin-bottom:45px;
+
+}
+
+
+
+.cards{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+gap:30px;
+
+}
+
+
+
+.card{
+
+background:#ffffff10;
+
+border:1px solid #ffffff20;
+
+padding:30px;
+
+border-radius:25px;
+
+backdrop-filter:blur(15px);
+
+transition:.4s;
+
+}
+
+
+
+.card:hover{
+
+transform:translateY(-15px);
+
+box-shadow:0 0 35px #8a2be255;
+
+}
+
+
+
+.card h3{
+
+font-size:25px;
+
+margin-bottom:15px;
+
+}
+
+
+
+.card p{
+
+opacity:.75;
+
+line-height:1.7;
+
+}
+
+
+
+footer{
+
+padding:30px;
+
+text-align:center;
+
+opacity:.5;
+
+}
+
+
+
+@media(max-width:700px){
+
+.logo{
+
+font-size:50px;
+
+}
+
+}
+
+</style>
+
 </head>
+
+
 <body>
 
-    <!-- HERO BÖLÜMÜ -->
-    <div class="hero">
-        <!-- OYUNUN ADINI BURAYA YAZ -->
-        <h1>ROBLOX OYUN ADI</h1>
-        
-        <!-- OYUNUN KISA AÇIKLAMASINI BURAYA YAZ -->
-        <p>Aksiyon dolu Roblox dünyamıza hoş geldin! Arkadaşlarınla beraber savaş, görevleri tamamla ve en güçlü oyuncu ol!</p>
-        
-        <!-- ROBLOX OYUN LİNKİNİ AŞAĞIDAKİ href= KISMINA YAPIŞTIR -->
-        <a href="https://www.roblox.com/games/OYUN_IDINIZ" target="_blank" class="play-btn">🎮 ROBLOX'TA OYNA</a>
-    </div>
 
-    <!-- ÖZELLİKLER BÖLÜMÜ -->
-    <div class="container">
-        <h2 class="section-title">Oyun Özellikleri</h2>
-        <div class="features">
-            <div class="feature-card">
-                <h3>⚔️ Destansı Savaşlar</h3>
-                <p>Çeşitli silahlar ve özel yeteneklerle rakiplerine meydan oku.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🗺️ Geniş Harita</h3>
-                <p>Gizemli bölgeleri keşfet, gizli ödülleri ve sandıkları topla.</p>
-            </div>
-            <div class="feature-card">
-                <h3>🏆 Sıralama & Ödüller</h3>
-                <p>Liderlik tablosuna tırmanarak haftalık özel ödüller kazan.</p>
-            </div>
-        </div>
-    </div>
+<header>
 
-    <!-- ALT BİLGİ -->
-    <footer>
-        <p>© 2026 Yusuf Durmuş - Tüm Hakları Saklıdır.</p>
-        <p>Roblox topluluğumuza katılın!</p>
-    </footer>
+
+<img class="profile" src="https://avatars.githubusercontent.com/u/9919?v=4">
+
+
+<div class="logo">
+CROXIN
+</div>
+
+
+<p class="subtitle">
+
+Roblox Developer • Web Designer • Community Manager
+
+</p>
+
+
+<div class="buttons">
+
+<a class="btn" href="#">Discord</a>
+
+<a class="btn" href="#">Instagram</a>
+
+<a class="btn" href="#">Projects</a>
+
+</div>
+
+
+</header>
+
+
+
+<section>
+
+
+<h2 class="title">
+🚀 About Croxin
+</h2>
+
+
+<div class="cards">
+
+
+<div class="card">
+
+<h3>🎮 Roblox Development</h3>
+
+<p>
+Roblox Studio ile oyunlar, sistemler ve özel projeler geliştiriyorum.
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>💻 Web Design</h3>
+
+<p>
+Modern, hızlı ve animasyonlu web siteleri tasarlıyorum.
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>🌐 Communities</h3>
+
+<p>
+Discord toplulukları ve oyun projeleri yönetiyorum.
+</p>
+
+</div>
+
+
+</div>
+
+
+</section>
+
+
+
+
+<section>
+
+
+<h2 class="title">
+
+⭐ Projects
+
+</h2>
+
+
+
+<div class="cards">
+
+
+<div class="card">
+
+<h3>Croxin Studio</h3>
+
+<p>
+Yakında burada geliştirilen projeler yer alacak.
+</p>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>Discord Network</h3>
+
+<p>
+Topluluk ve sunucu projeleri burada gösterilecek.
+</p>
+
+</div>
+
+
+
+</div>
+
+
+</section>
+
+
+
+
+<footer>
+
+© 2026 Croxin • All Rights Reserved
+
+</footer>
+
+
 
 </body>
+
 </html>
