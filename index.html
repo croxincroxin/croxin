@@ -1376,8 +1376,8 @@ document.querySelectorAll('.faq-question').forEach(q => {
 async function handleContact(e) {
     e.preventDefault();
     
-    // BURAYA KENDİ DISCORD WEBHOOK LINKINI YAPIŞTIR:
-    const webhookUrl = "BURAYA_DISCORD_WEBHOOK_LINKINI_YAPISTIR"; 
+    // Güncel Discord Webhook Linkiniz:
+    const webhookUrl = "https://discord.com/api/webhooks/1529948852797440220/AsmvI5U0CsnKSF1LhV_OyYb3pM7f1IkPFc48CSjJgbDtV0IBAcjhiX_9MqvIlupl4g0I"; 
 
     const name = document.getElementById('contactName').value;
     const info = document.getElementById('contactInfo').value;
@@ -1489,7 +1489,7 @@ audio.addEventListener('timeupdate', () => {
 
         let durMin = Math.floor(audio.duration / 60);
         let durSec = Math.floor(audio.duration % 60);
-        if (durSec < 10) durSec = `0${durSec}`;
+        if (durSec < 10) durSec = `0` + durSec;
         durationEl.textContent = `${durMin}:${durSec}`;
     }
 });
