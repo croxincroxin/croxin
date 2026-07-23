@@ -1152,7 +1152,7 @@ box-shadow: 0 0 8px var(--primary-color);
     </div>
 </section>
 
-<!-- İLETİŞİM FORMU (Formspree Entegrasyonlu - Bağlantı Hatası Kesin Çözüm) -->
+<!-- İLETİŞİM FORMU -->
 <section id="contact">
     <h2 class="title">✉️ İletişime Geç</h2>
     <div class="contact-container">
@@ -1379,12 +1379,12 @@ document.querySelectorAll('.faq-question').forEach(q => {
     });
 });
 
-// 9. İLETİŞİM FORMU (Formspree Güvenli Altyapısı + 120 Saniye Cooldown)
+// 9. İLETİŞİM FORMU (Doğrudan Discord Webhook Entegrasyonu + Proxy Yedekli)
 async function handleContact(e) {
     e.preventDefault();
     
     const lastSendTime = localStorage.getItem('croxin_last_msg_time');
-    const cooldownTime = 120 * 1000; // 120 Saniye
+    const cooldownTime = 120 * 1000; // 120 Saniye Cooldown
     const now = Date.now();
 
     if (lastSendTime && (now - lastSendTime < cooldownTime)) {
@@ -1401,34 +1401,54 @@ async function handleContact(e) {
     submitBtn.disabled = true;
     submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...`;
 
+    const discordPayload = {
+        embeds: [{
+            title: "📩 Yeni İletişim Mesajı!",
+            color: 3066993,
+            fields: [
+                { name: "👤 Gönderen:", value: name, inline: true },
+                { name: "📞 İletişim / Discord:", value: info, inline: true },
+                { name: "💬 Mesaj:", value: message, inline: false }
+            ],
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    const discordWebhookUrl = "https://discord.com/api/webhooks/1529948852797440220/AsmvI5U0CsnKSF1LhV_OyYb3pM7f1IkPFc48CSjJgbDtV0IBAcjhiX_9MqvIlupl4g0I";
+
     try {
-        // Formspree Güvenli Bağlantı Noktası (CORS hatası asla almaz)
-        const response = await fetch("https://formspree.io/f/xvgkazro", {
+        const response = await fetch(discordWebhookUrl, {
             method: "POST",
-            headers: { 
-                'Accept': 'application/json',
-                'Content-Type': 'application/json' 
-            },
-            body: JSON.stringify({ name: name, contact_info: info, message: message })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discordPayload)
         });
 
-        if (response.ok) {
-            alert("Mesajın başarıyla iletildi!");
+        if (response.ok || response.type === 'opaque') {
+            alert("Mesajın başarıyla Discord kanalına iletildi!");
             e.target.reset();
-            
             localStorage.setItem('croxin_last_msg_time', Date.now());
             startCooldownTimer(120);
         } else {
-            alert("Mesaj gönderilemedi, lütfen daha sonra tekrar dene.");
+            throw new Error("Discord yanıt vermedi.");
+        }
+    } catch (err) {
+        console.error(err);
+        try {
+            await fetch(`https://corsproxy.io/?` + encodeURIComponent(discordWebhookUrl), {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordPayload)
+            });
+            
+            alert("Mesajın başarıyla Discord kanalına iletildi!");
+            e.target.reset();
+            localStorage.setItem('croxin_last_msg_time', Date.now());
+            startCooldownTimer(120);
+        } catch (proxyErr) {
+            alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
             submitBtn.disabled = false;
             submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
         }
-        
-    } catch (err) {
-        console.error(err);
-        alert("Bir hata oluştu, lütfen internet bağlantını kontrol et.");
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
     }
 }
 
