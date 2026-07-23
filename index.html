@@ -52,6 +52,28 @@ z-index:-1;
 }
 
 
+/* ZİYARETÇİ / GÖRÜNTÜLENME SAYAÇ BADGE'İ */
+
+.views-counter {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.15);
+padding: 6px 16px;
+border-radius: 20px;
+backdrop-filter: blur(10px);
+font-size: 14px;
+font-weight: 600;
+margin-top: 15px;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.views-counter i {
+color: #00bfff;
+}
+
+
 /* SAĞ ÜST AÇILIR MENÜ VE HAMBURGER BUTONU */
 
 .menu-btn {
@@ -257,7 +279,7 @@ margin-top:20px;
 
 .buttons{
 
-margin-top:40px;
+margin-top:30px;
 
 }
 
@@ -400,7 +422,7 @@ bottom: 20px;
 left: 50%;
 transform: translateX(-50%);
 width: 90%;
-max-width: 550px;
+max-width: 650px;
 background: rgba(10, 14, 30, 0.85);
 backdrop-filter: blur(15px);
 border: 1px solid rgba(255, 255, 255, 0.15);
@@ -505,6 +527,62 @@ background: #fff;
 box-shadow: 0 0 15px #00bfff;
 }
 
+/* SES AYAR ALANI */
+
+.volume-container {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-left: 5px;
+}
+
+.volume-btn {
+background: none;
+border: none;
+color: #fff;
+font-size: 15px;
+cursor: pointer;
+opacity: 0.8;
+transition: 0.2s;
+}
+
+.volume-btn:hover {
+color: #00bfff;
+opacity: 1;
+}
+
+.volume-slider {
+-webkit-appearance: none;
+appearance: none;
+width: 70px;
+height: 4px;
+background: rgba(255, 255, 255, 0.2);
+border-radius: 2px;
+outline: none;
+cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 12px;
+height: 12px;
+border-radius: 50%;
+background: #00bfff;
+cursor: pointer;
+box-shadow: 0 0 8px #00bfff;
+}
+
+.volume-slider::-moz-range-thumb {
+width: 12px;
+height: 12px;
+border-radius: 50%;
+background: #00bfff;
+cursor: pointer;
+box-shadow: 0 0 8px #00bfff;
+border: none;
+}
+
 
 @media(max-width:700px){
 
@@ -516,7 +594,12 @@ font-size:50px;
 
 .music-player {
 width: 95%;
-padding: 10px 15px;
+padding: 10px 12px;
+gap: 10px;
+}
+
+.volume-slider {
+width: 50px;
 }
 
 }
@@ -564,6 +647,11 @@ CROXIN
 Roblox Developer • Web Designer • Community Manager
 
 </p>
+
+<!-- GÖRÜNTÜLENME SAYACI -->
+<div class="views-counter">
+    <i class="fas fa-eye"></i> <span id="visitCount">...</span>
+</div>
 
 
 <div class="buttons">
@@ -699,6 +787,12 @@ Topluluk ve sunucu projeleri burada gösterilecek.
         <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()"><i class="fas fa-play" id="playIcon"></i></button>
         <button class="control-btn"><i class="fas fa-step-forward"></i></button>
     </div>
+    
+    <!-- SES KONTROL ALANI -->
+    <div class="volume-container">
+        <button class="volume-btn" id="muteBtn" onclick="toggleMute()"><i class="fas fa-volume-high" id="volumeIcon"></i></button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8">
+    </div>
 </div>
 
 <!-- Ses Dosyası -->
@@ -717,6 +811,18 @@ Topluluk ve sunucu projeleri burada gösterilecek.
 
 
 <script>
+// CANLI ZİYARETÇİ SAYACI (COUNTAPI)
+async function updateVisitCount() {
+    try {
+        const response = await fetch('https://api.countapi.xyz/hit/croxincroxin.github.io/croxin-views');
+        const data = await response.json();
+        document.getElementById('visitCount').innerText = data.value;
+    } catch (error) {
+        document.getElementById('visitCount').innerText = "1";
+    }
+}
+updateVisitCount();
+
 // MENÜ AÇMA / KAPATMA SCRIPT'I
 const sideMenu = document.getElementById('sideMenu');
 const openMenuBtn = document.getElementById('openMenuBtn');
@@ -729,7 +835,7 @@ function toggleMenu() {
 openMenuBtn.addEventListener('click', toggleMenu);
 closeMenuBtn.addEventListener('click', toggleMenu);
 
-// MÜZİK ÇALAR SCRIPT
+// MÜZİK ÇALAR VE SES KONTROL SCRIPT'I
 const audio = document.getElementById('audioPlayer');
 const playBtn = document.getElementById('playBtn');
 const playIcon = document.getElementById('playIcon');
@@ -737,6 +843,10 @@ const progressFill = document.getElementById('progressFill');
 const progressBar = document.getElementById('progressBar');
 const currentTimeEl = document.getElementById('currentTime');
 const durationEl = document.getElementById('duration');
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeIcon = document.getElementById('volumeIcon');
+
+audio.volume = 0.8; // Varsayılan ses %80
 
 function togglePlay() {
     if (audio.paused) {
@@ -750,6 +860,36 @@ function togglePlay() {
 
 function restartSong() {
     audio.currentTime = 0;
+}
+
+// Ses seviyesi değiştirme
+volumeSlider.addEventListener('input', (e) => {
+    audio.volume = e.target.value;
+    updateVolumeIcon();
+});
+
+// Sessize alma / açma
+function toggleMute() {
+    if (audio.volume > 0) {
+        audio.dataset.prevVolume = audio.volume;
+        audio.volume = 0;
+        volumeSlider.value = 0;
+    } else {
+        const prev = audio.dataset.prevVolume || 0.8;
+        audio.volume = prev;
+        volumeSlider.value = prev;
+    }
+    updateVolumeIcon();
+}
+
+function updateVolumeIcon() {
+    if (audio.volume == 0) {
+        volumeIcon.className = 'fas fa-volume-xmark';
+    } else if (audio.volume < 0.5) {
+        volumeIcon.className = 'fas fa-volume-low';
+    } else {
+        volumeIcon.className = 'fas fa-volume-high';
+    }
 }
 
 audio.addEventListener('timeupdate', () => {
