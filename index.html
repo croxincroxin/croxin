@@ -1379,7 +1379,7 @@ document.querySelectorAll('.faq-question').forEach(q => {
     });
 });
 
-// 9. İLETİŞİM FORMU (Doğrudan Discord Webhook Entegrasyonu + Proxy Yedekli)
+// 9. İLETİŞİM FORMU (Cloudflare Worker Köprüsü Entegrasyonlu)
 async function handleContact(e) {
     e.preventDefault();
     
@@ -1414,41 +1414,31 @@ async function handleContact(e) {
         }]
     };
 
-    const discordWebhookUrl = "https://discord.com/api/webhooks/1529948852797440220/AsmvI5U0CsnKSF1LhV_OyYb3pM7f1IkPFc48CSjJgbDtV0IBAcjhiX_9MqvIlupl4g0I";
+    // Oluşturduğumuz Cloudflare Worker Köprü Linkimiz
+    const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
 
     try {
-        const response = await fetch(discordWebhookUrl, {
+        const response = await fetch(workerBridgeUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordPayload)
         });
 
-        if (response.ok || response.type === 'opaque') {
+        const sonucVerisi = await response.json();
+
+        if (response.ok && sonucVerisi.success) {
             alert("Mesajın başarıyla Discord kanalına iletildi!");
             e.target.reset();
             localStorage.setItem('croxin_last_msg_time', Date.now());
             startCooldownTimer(120);
         } else {
-            throw new Error("Discord yanıt vermedi.");
+            throw new Error(sonucVerisi.error || "Bilinmeyen hata");
         }
     } catch (err) {
         console.error(err);
-        try {
-            await fetch(`https://corsproxy.io/?` + encodeURIComponent(discordWebhookUrl), {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(discordPayload)
-            });
-            
-            alert("Mesajın başarıyla Discord kanalına iletildi!");
-            e.target.reset();
-            localStorage.setItem('croxin_last_msg_time', Date.now());
-            startCooldownTimer(120);
-        } catch (proxyErr) {
-            alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
-        }
+        alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
     }
 }
 
