@@ -650,7 +650,7 @@ Roblox Developer • Web Designer • Community Manager
 
 <!-- GÖRÜNTÜLENME SAYACI -->
 <div class="views-counter">
-    <i class="fas fa-eye"></i> <span id="visitCount">Yükleniyor...</span>
+    <i class="fas fa-eye"></i> <span id="visitCount">...</span>
 </div>
 
 
@@ -811,18 +811,29 @@ Topluluk ve sunucu projeleri burada gösterilecek.
 
 
 <script>
-// YENİ VE HIZLI CANLI ZİYARETÇİ SAYACI (COUNTERAPI)
+// KESİN VE HIZLI CANLI ZİYARETÇİ SAYACI
 async function updateVisitCount() {
+    const counterEl = document.getElementById('visitCount');
+    const namespace = "croxincroxin.github.io";
+    const key = "pageviews";
+
     try {
-        const response = await fetch('https://counterapi.com/api/v1/croxincroxin.github.io/views/up');
+        const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up?t=${Date.now()}`);
         const data = await response.json();
-        if (data && data.up) {
-            document.getElementById('visitCount').innerText = data.up;
+        
+        if (data && data.count) {
+            counterEl.innerText = data.count;
         } else {
-            document.getElementById('visitCount').innerText = "1";
+            counterEl.innerText = "1";
         }
     } catch (error) {
-        document.getElementById('visitCount').innerText = "1";
+        try {
+            const fallbackRes = await fetch(`https://count.getloli.com/get/@croxincroxin_views`);
+            const fallbackData = await fallbackRes.json();
+            counterEl.innerText = fallbackData.views || "1";
+        } catch (e) {
+            counterEl.innerText = "1";
+        }
     }
 }
 updateVisitCount();
