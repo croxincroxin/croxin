@@ -1,533 +1,157 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Yusuf Durmuş | Official Website</title>
-
-<meta name="description" content="Yusuf Durmuş'un resmi kişisel web sitesi.">
-<meta name="theme-color" content="#0b1220">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-scroll-behavior:smooth;
-}
-
-body{
-
-font-family:Poppins,sans-serif;
-
-background:#050816;
-
-overflow-x:hidden;
-
-color:white;
-
-}
-
-canvas{
-
-position:fixed;
-
-left:0;
-
-top:0;
-
-width:100%;
-
-height:100%;
-
-z-index:-2;
-
-}
-
-.light{
-
-position:fixed;
-
-width:500px;
-
-height:500px;
-
-background:radial-gradient(circle,#00bfff55,transparent 70%);
-
-border-radius:50%;
-
-pointer-events:none;
-
-transform:translate(-50%,-50%);
-
-z-index:-1;
-
-}
-
-header{
-
-height:100vh;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-flex-direction:column;
-
-text-align:center;
-
-padding:20px;
-
-}
-
-.profile{
-
-width:180px;
-
-height:180px;
-
-border-radius:50%;
-
-border:5px solid #00bfff;
-
-box-shadow:0 0 40px #00bfff;
-
-animation:float 4s ease-in-out infinite;
-
-}
-
-h1{
-
-font-size:70px;
-
-font-weight:800;
-
-margin-top:30px;
-
-background:linear-gradient(90deg,#00bfff,#6be5ff);
-
--webkit-background-clip:text;
-
--webkit-text-fill-color:transparent;
-
-}
-
-.subtitle{
-
-font-size:22px;
-
-opacity:.8;
-
-margin-top:15px;
-
-}
-
-.buttons{
-
-margin-top:40px;
-
-display:flex;
-
-gap:20px;
-
-flex-wrap:wrap;
-
-justify-content:center;
-
-}
-
-.btn{
-
-padding:15px 35px;
-
-border-radius:14px;
-
-background:#00bfff;
-
-text-decoration:none;
-
-color:white;
-
-font-weight:700;
-
-transition:.3s;
-
-}
-
-.btn:hover{
-
-transform:translateY(-6px);
-
-box-shadow:0 0 30px #00bfff;
-
-}
-
-section{
-
-padding:120px 10%;
-
-}
-
-.title{
-
-font-size:42px;
-
-margin-bottom:40px;
-
-text-align:center;
-
-}
-
-.cards{
-
-display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-
-gap:30px;
-
-}
-
-.card{
-
-background:rgba(255,255,255,.05);
-
-backdrop-filter:blur(18px);
-
-border:1px solid rgba(255,255,255,.08);
-
-padding:30px;
-
-border-radius:22px;
-
-transition:.35s;
-
-}
-
-.card:hover{
-
-transform:translateY(-12px);
-
-box-shadow:0 0 35px rgba(0,191,255,.45);
-
-}
-
-.card h3{
-
-font-size:25px;
-
-margin-bottom:15px;
-
-}
-
-.card p{
-
-opacity:.75;
-
-line-height:1.8;
-
-}
-
-@keyframes float{
-
-0%{transform:translateY(0);}
-
-50%{transform:translateY(-15px);}
-
-100%{transform:translateY(0);}
-
-}
-
-.fade{
-
-opacity:0;
-
-transform:translateY(60px);
-
-transition:1s;
-
-}
-
-.fade.show{
-
-opacity:1;
-
-transform:none;
-
-}
-
-footer{
-
-padding:40px;
-
-text-align:center;
-
-opacity:.6;
-
-font-size:15px;
-
-}
-
-@media(max-width:768px){
-
-h1{
-
-font-size:42px;
-
-}
-
-.subtitle{
-
-font-size:18px;
-
-}
-
-.profile{
-
-width:150px;
-
-height:150px;
-
-}
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roblox Oyunum - Tanıtım Sitesi</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #0f1219;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        /* Üst Başlık (Hero) Alanı */
+        .hero {
+            background: linear-gradient(rgba(15, 18, 25, 0.8), rgba(15, 18, 25, 1)), 
+                        url('https://images.rbxcdn.com/f63df0b33e215451a5c619cb246d8881.jpg') center/cover;
+            padding: 100px 20px 80px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: #00a2ff;
+            text-shadow: 0 0 15px rgba(0, 162, 255, 0.6);
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #ccc;
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        /* Oyna Butonu */
+        .play-btn {
+            display: inline-block;
+            background-color: #00e676;
+            color: #000;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 16px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.08);
+            background-color: #00c853;
+            box-shadow: 0 0 30px rgba(0, 230, 118, 0.8);
+        }
+
+        /* Özellikler Bölümü */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #00a2ff;
+        }
+
+        .features {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: #1a1f2c;
+            border: 1px solid #2a3245;
+            border-radius: 12px;
+            padding: 25px;
+            width: 280px;
+            text-align: left;
+        }
+
+        .feature-card h3 {
+            color: #00e676;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #aaa;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Alt Bilgi / Sosyal Medya */
+        footer {
+            background-color: #080a0e;
+            padding: 30px 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #1a1f2c;
+        }
+
+        footer a {
+            color: #00a2ff;
+            text-decoration: none;
+        }
+    </style>
 </head>
-
 <body>
 
-<canvas id="stars"></canvas>
-
-<div class="light"></div>
-
-<header>
-
-<img class="profile" src="https://avatars.githubusercontent.com/u/9919?v=4">
-
-<h1>Yusuf Durmuş</h1>
-
-<p class="subtitle">
-
-Roblox Developer • Discord Community
-
-</p>
-
-<div class="buttons">
-
-<a class="btn" href="#">GitHub</a>
-
-<a class="btn" href="#">Discord</a>
-
-<a class="btn" href="#">Instagram</a>
-
-</div>
-
-</header>
-<section>
-
-<h2 class="title fade">Hakkımda</h2>
-
-<div class="cards">
-
-<div class="card fade">
-
-<h3>👋 Ben Kimim?</h3>
-
-<p>
-
-Merhaba! Ben Yusuf Durmuş.
-Roblox geliştirme, Discord topluluk yönetimi ve web tasarımı ile ilgileniyorum.
-
-</p>
-
-</div>
-
-<div class="card fade">
-
-<h3>💻 Yetenekler</h3>
-
-<p>
-
-• HTML & CSS<br>
-• JavaScript<br>
-• Roblox Studio<br>
-• Discord Sunucu Yönetimi
-
-</p>
-
-</div>
-
-<div class="card fade">
-
-<h3>🚀 Hedefler</h3>
-
-<p>
-
-Kendi projelerimi geliştirerek profesyonel bir yazılımcı olmak ve kaliteli topluluklar oluşturmak.
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<footer>
-
-© 2026 Yusuf Durmuş • Tüm Hakları Saklıdır
-
-</footer>
-
-<script>
-
-const light=document.querySelector(".light");
-
-document.addEventListener("mousemove",e=>{
-
-light.style.left=e.clientX+"px";
-
-light.style.top=e.clientY+"px";
-
-});
-
-const canvas=document.getElementById("stars");
-
-const ctx=canvas.getContext("2d");
-
-function resize(){
-
-canvas.width=window.innerWidth;
-
-canvas.height=window.innerHeight;
-
-}
-
-resize();
-
-window.addEventListener("resize",resize);
-
-const stars=[];
-
-for(let i=0;i<160;i++){
-
-stars.push({
-
-x:Math.random()*canvas.width,
-
-y:Math.random()*canvas.height,
-
-r:Math.random()*2,
-
-s:Math.random()*0.7+0.2
-
-});
-
-}
-
-function draw(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-ctx.fillStyle="#00bfff";
-
-for(let s of stars){
-
-ctx.beginPath();
-
-ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-
-ctx.fill();
-
-s.y+=s.s;
-
-if(s.y>canvas.height){
-
-s.y=0;
-
-s.x=Math.random()*canvas.width;
-
-}
-
-}
-
-requestAnimationFrame(draw);
-
-}
-
-draw();
-
-const observer=new IntersectionObserver(entries=>{
-
-entries.forEach(entry=>{
-
-if(entry.isIntersecting){
-
-entry.target.classList.add("show");
-
-}
-
-});
-
-});
-
-document.querySelectorAll(".fade").forEach(el=>observer.observe(el));
-
-  // Kartlara 3D hareket efekti
-
-const cards = document.querySelectorAll(".card");
-
-cards.forEach(card => {
-
-    card.addEventListener("mousemove", e => {
-
-        const rect = card.getBoundingClientRect();
-
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-
-        const rotateX = (y - centerY) / 15;
-        const rotateY = (x - centerX) / 15;
-
-        card.style.transform =
-        `perspective(600px) rotateX(${-rotateX}deg) rotateY(${rotateY}deg) translateY(-12px)`;
-
-    });
-
-
-    card.addEventListener("mouseleave", () => {
-
-        card.style.transform = "translateY(0)";
-
-    });
-
-});
-
-
-// Açılış animasyonu
-
-window.addEventListener("load", () => {
-
-    document.querySelector("header").style.opacity = "1";
-
-});
-
-</script>
+    <!-- HERO BÖLÜMÜ -->
+    <div class="hero">
+        <!-- OYUNUN ADINI BURAYA YAZ -->
+        <h1>ROBLOX OYUN ADI</h1>
+        
+        <!-- OYUNUN KISA AÇIKLAMASINI BURAYA YAZ -->
+        <p>Aksiyon dolu Roblox dünyamıza hoş geldin! Arkadaşlarınla beraber savaş, görevleri tamamla ve en güçlü oyuncu ol!</p>
+        
+        <!-- ROBLOX OYUN LİNKİNİ AŞAĞIDAKİ href= KISMINA YAPIŞTIR -->
+        <a href="https://www.roblox.com/games/OYUN_IDINIZ" target="_blank" class="play-btn">🎮 ROBLOX'TA OYNA</a>
+    </div>
+
+    <!-- ÖZELLİKLER BÖLÜMÜ -->
+    <div class="container">
+        <h2 class="section-title">Oyun Özellikleri</h2>
+        <div class="features">
+            <div class="feature-card">
+                <h3>⚔️ Destansı Savaşlar</h3>
+                <p>Çeşitli silahlar ve özel yeteneklerle rakiplerine meydan oku.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🗺️ Geniş Harita</h3>
+                <p>Gizemli bölgeleri keşfet, gizli ödülleri ve sandıkları topla.</p>
+            </div>
+            <div class="feature-card">
+                <h3>🏆 Sıralama & Ödüller</h3>
+                <p>Liderlik tablosuna tırmanarak haftalık özel ödüller kazan.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALT BİLGİ -->
+    <footer>
+        <p>© 2026 Yusuf Durmuş - Tüm Hakları Saklıdır.</p>
+        <p>Roblox topluluğumuza katılın!</p>
+    </footer>
 
 </body>
-
 </html>
