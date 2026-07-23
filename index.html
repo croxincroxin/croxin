@@ -31,6 +31,129 @@ overflow-x:hidden;
 padding-bottom: 90px;
 }
 
+/* Sayfa Tam Yüklenene Kadar Kaydırmayı Engelle */
+body.enter-locked {
+overflow: hidden;
+}
+
+/* ==========================================
+   ÖZEL GİRİŞ EKRANI (WELCOME SCREEN) STİLLERİ
+   ========================================== */
+.welcome-screen {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+background: #03050d;
+z-index: 99999;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* Giriş ekranı kapatıldığında çalışacak animasyon */
+.welcome-screen.hidden {
+opacity: 0;
+visibility: hidden;
+transform: translateY(-100%);
+}
+
+/* Arka Plan Işıkları */
+.welcome-screen::before {
+content: "";
+position: absolute;
+width: 300px;
+height: 300px;
+background: radial-gradient(circle, rgba(0, 191, 255, 0.4), transparent 70%);
+filter: blur(50px);
+animation: pulseLight 4s infinite alternate;
+}
+
+.welcome-screen::after {
+content: "";
+position: absolute;
+width: 300px;
+height: 300px;
+background: radial-gradient(circle, rgba(138, 43, 226, 0.4), transparent 70%);
+filter: blur(50px);
+animation: pulseLight 4s infinite alternate-reverse;
+}
+
+@keyframes pulseLight {
+0% { transform: scale(1) translate(-30px, -30px); }
+100% { transform: scale(1.3) translate(30px, 30px); }
+}
+
+.welcome-content {
+position: relative;
+z-index: 2;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 20px;
+padding: 20px;
+}
+
+.welcome-avatar {
+width: 130px;
+height: 130px;
+border-radius: 50%;
+object-fit: cover;
+border: 3px solid #00bfff;
+box-shadow: 0 0 35px rgba(0, 191, 255, 0.6);
+animation: floatAvatar 3s ease-in-out infinite;
+}
+
+@keyframes floatAvatar {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-12px); }
+}
+
+.welcome-title {
+font-size: 38px;
+font-weight: 800;
+letter-spacing: 4px;
+background: linear-gradient(90deg, #8a2be2, #00bfff);
+-webkit-background-clip: text;
+color: transparent;
+text-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+}
+
+.welcome-sub {
+font-size: 14px;
+opacity: 0.7;
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+
+.enter-btn {
+padding: 16px 40px;
+font-size: 16px;
+font-weight: 700;
+color: #fff;
+background: rgba(255, 255, 255, 0.05);
+border: 2px solid #00bfff;
+border-radius: 30px;
+cursor: pointer;
+backdrop-filter: blur(10px);
+box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+transition: all 0.4s ease;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.enter-btn:hover {
+background: #00bfff;
+color: #000;
+box-shadow: 0 0 40px #00bfff;
+transform: scale(1.08);
+}
 
 /* Arka plan ışıkları */
 
@@ -592,6 +715,10 @@ font-size:50px;
 
 }
 
+.welcome-title {
+font-size: 28px;
+}
+
 .music-player {
 width: 95%;
 padding: 10px 12px;
@@ -609,7 +736,19 @@ width: 50px;
 </head>
 
 
-<body>
+<body class="enter-locked">
+
+<!-- GİRİŞ EKRANI (WELCOME SCREEN) -->
+<div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-content">
+        <img class="welcome-avatar" src="https://github.com/croxincroxin.png?v=2" alt="Croxin">
+        <div class="welcome-title">WELCOME TO CROXIN</div>
+        <div class="welcome-sub">Developer • Designer • Community Manager</div>
+        <button class="enter-btn" id="enterBtn">
+            <i class="fas fa-arrow-right-to-bracket"></i> SİTEYE GİRİŞ YAP
+        </button>
+    </div>
+</div>
 
 <!-- HAMBURGER MENÜ BUTONU -->
 <button class="menu-btn" id="openMenuBtn"><i class="fas fa-bars"></i></button>
@@ -811,6 +950,21 @@ Topluluk ve sunucu projeleri burada gösterilecek.
 
 
 <script>
+// GİRİŞ EKRANI SCRIPT'I
+const welcomeScreen = document.getElementById('welcomeScreen');
+const enterBtn = document.getElementById('enterBtn');
+
+enterBtn.addEventListener('click', () => {
+    // Giriş ekranını animasyonla kaldır
+    welcomeScreen.classList.add('hidden');
+    document.body.classList.remove('enter-locked');
+    
+    // Kullanıcı tıkladığı an müziği otomatik başlat
+    audio.play().then(() => {
+        playIcon.className = 'fas fa-pause';
+    }).catch(err => console.log("Otomatik oynatma engellendi:", err));
+});
+
 // TEKİL VE KALICI ZİYARETÇİ SAYACI
 async function updateVisitCount() {
     const counterEl = document.getElementById('visitCount');
@@ -820,10 +974,8 @@ async function updateVisitCount() {
     let userNumber = localStorage.getItem('croxin_visitor_no');
 
     if (userNumber) {
-        // Zaten ziyaret ettiyse kayıtlı sırasını yazdır
         counterEl.innerText = userNumber;
     } else {
-        // İlk kez giriyorsa sunucudan yeni sıra numarası al ve kaydet
         try {
             const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up?t=${Date.now()}`);
             const data = await response.json();
