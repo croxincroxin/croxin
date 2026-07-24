@@ -41,7 +41,7 @@ margin:0;
 padding:0;
 box-sizing:border-box;
 font-family:Poppins,sans-serif;
-cursor: none;
+cursor: none; /* Özel imleç için varsayılanı gizle */
 }
 
 html{
@@ -52,7 +52,7 @@ body{
 background: var(--bg-dark);
 color: var(--text-color);
 overflow-x:hidden;
-padding-bottom: 130px;
+padding-bottom: 90px;
 transition: background 0.3s;
 }
 
@@ -205,7 +205,7 @@ box-shadow: 0 0 40px var(--primary-color);
 transform: scale(1.08);
 }
 
-/* ZİYARETÇİ SAYAÇ BADGE'İ */
+/* ZİYARETÇİ / GÖRÜNTÜLENME SAYAÇ BADGE'İ */
 .views-counter {
 display: inline-flex;
 align-items: center;
@@ -450,7 +450,7 @@ backdrop-filter: blur(10px);
 .status-indicator {
 width: 14px;
 height: 14px;
-background: #43b581;
+background: #43b581; /* Discord Online Green */
 border-radius: 50%;
 box-shadow: 0 0 10px #43b581;
 position: relative;
@@ -482,7 +482,7 @@ opacity: 0.9;
 color: var(--primary-color);
 }
 
-/* SKILLS MARQUEE */
+/* SKILLS MARQUEE (SONSUZ KAYAN ŞERİT) */
 .marquee-container {
 width: 100%;
 overflow: hidden;
@@ -538,6 +538,7 @@ grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 gap:30px;
 }
 
+/* 3D TILT EFEKTLİ KARTLAR */
 .card{
 background: var(--card-bg);
 border: 1px solid var(--card-border);
@@ -608,7 +609,7 @@ font-weight: 600;
 margin-bottom: 12px;
 }
 
-/* FAQ SIK SORULAN SORULAR */
+/* FAQ SIK SORULAN SORULAR ACCORDION */
 .faq-container {
 max-width: 800px;
 margin: 0 auto;
@@ -795,12 +796,9 @@ margin-bottom: 20px;
 
 /* FOOTER & MÜZİK ÇALAR */
 footer{
-padding: 20px 30px;
-text-align: center;
-opacity: 0.6;
-position: relative;
-z-index: 2;
-margin-top: 20px;
+padding:30px;
+text-align:center;
+opacity:.5;
 }
 
 .music-player {
@@ -971,7 +969,7 @@ box-shadow: 0 0 8px var(--primary-color);
 
 <body class="enter-locked">
 
-<!-- ÖZEL NEON MOUSE İMLECİ -->
+<!-- ÖZEL NENON MOUSE İMLECİ -->
 <div class="custom-cursor" id="cursor"></div>
 <div class="custom-cursor-follower" id="follower"></div>
 
@@ -1032,9 +1030,8 @@ box-shadow: 0 0 8px var(--primary-color);
     <div class="status-indicator" id="discordDot"></div>
     <div class="discord-text" id="discordText">Discord: <strong>realyusufi</strong> (Bağlanıyor...)</div>
 </div>
-
-<script>
-async function updateDiscordStatus() {
+    <script>
+    async function updateDiscordStatus() {
     try {
         const response = await fetch('https://api.lanyard.rest/v1/users/1403418770009227387');
         const data = await response.json();
@@ -1063,6 +1060,7 @@ async function updateDiscordStatus() {
         console.log("Discord durumu alınamadı");
     }
 }
+
 updateDiscordStatus();
 setInterval(updateDiscordStatus, 5000);
 </script>
@@ -1080,7 +1078,7 @@ setInterval(updateDiscordStatus, 5000);
 
 </header>
 
-<!-- SKILLS MARQUEE -->
+<!-- SKILLS MARQUEE (KAYAN TEKNOLOJİ ŞERİDİ) -->
 <div class="marquee-container">
     <div class="marquee-content">
         <div class="skill-item"><i class="fab fa-html5"></i> HTML5</div>
@@ -1089,6 +1087,7 @@ setInterval(updateDiscordStatus, 5000);
         <div class="skill-item"><i class="fas fa-gamepad"></i> Roblox Studio (Lua)</div>
         <div class="skill-item"><i class="fas fa-code"></i> VS Code</div>
         <div class="skill-item"><i class="fab fa-discord"></i> Discord Bot Dev</div>
+        <!-- Tekrar eden öğeler (Sonsuz döngü için) -->
         <div class="skill-item"><i class="fab fa-html5"></i> HTML5</div>
         <div class="skill-item"><i class="fab fa-css3-alt"></i> CSS3</div>
         <div class="skill-item"><i class="fab fa-js"></i> JavaScript</div>
@@ -1122,6 +1121,7 @@ setInterval(updateDiscordStatus, 5000);
 <section id="projects">
 <h2 class="title">⭐ Projects</h2>
 
+<!-- PROJE FİLTRELEME -->
 <div class="project-filters">
     <button class="filter-btn active" onclick="filterProjects('all')">Tümü</button>
     <button class="filter-btn" onclick="filterProjects('roblox')">Roblox</button>
@@ -1152,6 +1152,7 @@ setInterval(updateDiscordStatus, 5000);
 </div>
 </section>
 
+<!-- SIK SORULAN SORULAR (FAQ) -->
 <section id="faq">
     <h2 class="title">❓ Sık Sorulan Sorular</h2>
     <div class="faq-container">
@@ -1185,6 +1186,7 @@ setInterval(updateDiscordStatus, 5000);
     </div>
 </section>
 
+<!-- İLETİŞİM FORMU -->
 <section id="contact">
     <h2 class="title">✉️ İletişime Geç</h2>
     <div class="contact-container">
@@ -1248,6 +1250,7 @@ setInterval(updateDiscordStatus, 5000);
 </footer>
 
 <script>
+// 1. ÖZEL NENON MOUSE İMLECİ (CUSTOM CURSOR)
 const cursor = document.getElementById('cursor');
 const follower = document.getElementById('follower');
 
@@ -1261,6 +1264,7 @@ document.addEventListener('mousemove', (e) => {
     }, 50);
 });
 
+// 2. PARÇACIK ARKA PLAN ANIMASYONU (CANVAS)
 const canvas = document.getElementById('particles-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -1316,6 +1320,7 @@ function drawParticles() {
 }
 drawParticles();
 
+// 3. 3D TILT EFEKTİ
 document.querySelectorAll('.tilt-card').forEach(card => {
     card.addEventListener('mousemove', (e) => {
         const rect = card.getBoundingClientRect();
@@ -1329,11 +1334,13 @@ document.querySelectorAll('.tilt-card').forEach(card => {
     });
 });
 
+// 4. RENK TEMA DEĞİŞTİRİCİ
 function setTheme(theme) {
     if (theme === 'default') document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme', theme);
 }
 
+// 5. GİRİŞ EKRANI
 const welcomeScreen = document.getElementById('welcomeScreen');
 const enterBtn = document.getElementById('enterBtn');
 
@@ -1345,6 +1352,7 @@ enterBtn.addEventListener('click', () => {
     }).catch(err => console.log("Otomatik oynatma:", err));
 });
 
+// 6. TEKİL VE KALICI ZİYARETÇİ SAYACI
 async function updateVisitCount() {
     const counterEl = document.getElementById('visitCount');
     const namespace = "croxin_official_site";
@@ -1373,6 +1381,7 @@ async function updateVisitCount() {
 }
 updateVisitCount();
 
+// 7. PROJE FİLTRELEME & MODAL
 function filterProjects(category) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     event.target.classList.add('active');
@@ -1396,6 +1405,7 @@ function closeModal() {
     document.getElementById('projectModal').classList.remove('active');
 }
 
+// 8. FAQ ACCORDION
 document.querySelectorAll('.faq-question').forEach(q => {
     q.addEventListener('click', () => {
         const item = q.parentElement;
@@ -1403,11 +1413,12 @@ document.querySelectorAll('.faq-question').forEach(q => {
     });
 });
 
+// 9. İLETİŞİM FORMU (Cloudflare Worker Köprüsü Entegrasyonlu)
 async function handleContact(e) {
     e.preventDefault();
     
     const lastSendTime = localStorage.getItem('croxin_last_msg_time');
-    const cooldownTime = 120 * 1000;
+    const cooldownTime = 120 * 1000; // 120 Saniye Cooldown
     const now = Date.now();
 
     if (lastSendTime && (now - lastSendTime < cooldownTime)) {
@@ -1437,6 +1448,7 @@ async function handleContact(e) {
         }]
     };
 
+    // Oluşturduğumuz Cloudflare Worker Köprü Linkimiz
     const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
 
     try {
@@ -1464,6 +1476,7 @@ async function handleContact(e) {
     }
 }
 
+// 120 Saniyelik Buton Geri Sayım Fonksiyonu
 function startCooldownTimer(seconds) {
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
@@ -1492,6 +1505,7 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// 10. MENÜ KONTROLÜ
 const sideMenu = document.getElementById('sideMenu');
 const openMenuBtn = document.getElementById('openMenuBtn');
 const closeMenuBtn = document.getElementById('closeMenuBtn');
@@ -1503,6 +1517,7 @@ function toggleMenu() {
 openMenuBtn.addEventListener('click', toggleMenu);
 closeMenuBtn.addEventListener('click', toggleMenu);
 
+// 11. MÜZİK ÇALAR KONTROLLERİ
 const audio = document.getElementById('audioPlayer');
 const playBtn = document.getElementById('playBtn');
 const playIcon = document.getElementById('playIcon');
