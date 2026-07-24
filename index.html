@@ -1758,7 +1758,7 @@ progressBar.addEventListener('click', (e) => {
 });
 </script>
 
-    <!-- AI SOHBET WIDGET -->
+<!-- AI SOHBET WIDGET -->
 <div id="aiChatWidget" class="ai-chat-widget">
     <!-- Açma/Kapatma Butonu -->
     <button id="aiChatToggle" class="ai-chat-toggle">
@@ -1789,6 +1789,7 @@ progressBar.addEventListener('click', (e) => {
         </div>
     </div>
 </div>
+
 <script>
 const chatToggle = document.getElementById('aiChatToggle');
 const chatContainer = document.getElementById('aiChatContainer');
@@ -1805,10 +1806,11 @@ chatClose.addEventListener('click', () => {
     chatContainer.classList.add('hidden');
 });
 
-function handleUserMessage() {
+async function handleUserMessage() {
     const text = chatInput.value.trim();
     if (!text) return;
 
+    // Kullanıcının mesajını ekrana yaz
     const userMsg = document.createElement('div');
     userMsg.className = 'ai-message user';
     userMsg.textContent = text;
@@ -1817,13 +1819,49 @@ function handleUserMessage() {
     chatInput.value = '';
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    setTimeout(() => {
+    // Yükleniyor efekti
+    const loadingMsg = document.createElement('div');
+    loadingMsg.className = 'ai-message bot';
+    loadingMsg.textContent = 'Yazıyor...';
+    chatMessages.appendChild(loadingMsg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        // Cloudflare Worker'a istek gönder
+        const response = await fetch("https://long-surf-ac45.yusufun5askeri.workers.dev/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                action: "ai",
+                message: text
+            })
+        });
+
+        const data = await response.json();
+        
+        // "Yazıyor..." yazısını kaldır
+        chatMessages.removeChild(loadingMsg);
+
         const botMsg = document.createElement('div');
         botMsg.className = 'ai-message bot';
-        botMsg.textContent = "Harika bir noktaya değindin! Bunu sitene entegre etmek için Cloudflare Worker üzerinden API bağlantısı kurabiliriz.";
+
+        if (data.success) {
+            botMsg.textContent = data.reply;
+        } else {
+            botMsg.textContent = "Bir hata oluştu: " + (data.error || "Bilinmeyen hata");
+        }
+
         chatMessages.appendChild(botMsg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
-    }, 1000);
+
+    } catch (err) {
+        chatMessages.removeChild(loadingMsg);
+        const errorMsg = document.createElement('div');
+        errorMsg.className = 'ai-message bot';
+        errorMsg.textContent = "Bağlantı hatası oluştu.";
+        chatMessages.appendChild(errorMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 }
 
 chatSend.addEventListener('click', handleUserMessage);
@@ -1831,7 +1869,5 @@ chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleUserMessage();
 });
 </script>
-
-    
 </body>
 </html>
