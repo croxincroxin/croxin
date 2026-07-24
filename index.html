@@ -1659,16 +1659,17 @@
             try {
                 // Not: Kendi Gemini API anahtarınızı buraya ekleyebilirsiniz veya Cloudflare Worker üzerinden güvenli çağrı yapabilirsiniz.
                 const API_KEY = "AQ.Ab8RN6IeRh0wpB7pvmsW3OLG5YjaskYhDZmTWbfrz1fvXVMiPA";
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
                 const response = await fetch(endpoint, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{
-                            parts: [{ text: "Sen Croxin adlı geliştiricinin (yusuf) web sitesindeki akıllı yapay zeka asistanısın. Kullanıcıya kısa, kibar ve yardımcı yanıtlar ver. Kullanıcının sorusu: " + text }]
-                        }]
-                    })
+    parts: [{ 
+        text: "Sen Croxin adlı geliştiricinin (yusuf) web sitesindeki akıllı yapay zeka asistanısın. Kullanıcıya kısa, kibar ve yardımcı yanıtlar ver. Kullanıcının sorusu: " + text 
+    }]
+}]
                 });
 
                 const data = await response.json();
