@@ -8,14 +8,12 @@
         :root {
             --primary-color: #00ffcc;
             --bg-color: #0b0b16;
-            --card-bg: rgba(15, 15, 25, 0.85);
-            --card-border: rgba(255, 255, 255, 0.1);
+            --card-bg: rgba(18, 18, 30, 0.95);
+            --card-border: rgba(255, 255, 255, 0.15);
         }
         body {
             background: var(--bg-color);
-            background-image: radial-gradient(circle at 10% 20%, rgba(0, 255, 204, 0.05) 0%, transparent 40%),
-                              radial-gradient(circle at 90% 80%, rgba(0, 119, 255, 0.05) 0%, transparent 40%);
-            color: #fff;
+            color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 20px;
@@ -24,85 +22,67 @@
             align-items: center;
             justify-content: center;
         }
-        /* Özel Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-color);
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
         .ticket-item {
             padding: 12px;
             margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--card-border);
             border-radius: 10px;
             cursor: pointer;
             font-size: 13px;
+            color: #ffffff;
             transition: all 0.2s ease;
         }
-        .ticket-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateY(-2px);
-        }
+        .ticket-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
         .ticket-item.active {
             background: linear-gradient(135deg, var(--primary-color), #0077ff);
-            color: #000;
+            color: #000000;
             border-color: transparent;
-            font-weight: 600;
+            font-weight: 700;
             box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
         }
+        .ticket-item.active span { background: rgba(0, 0, 0, 0.2) !important; color: #000000 !important; }
         .action-btn {
             background: linear-gradient(135deg, var(--primary-color), #0077ff);
             border: none;
             border-radius: 8px;
-            color: #000;
+            color: #000000;
             font-weight: 700;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
         }
-        .action-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4);
-        }
+        .action-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4); }
     </style>
 </head>
 <body>
 
-    <!-- YÖNETİCİ / YETKİLİ PANELİ -->
-    <div id="adminPanel" style="width: 100%; max-width: 950px; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 24px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.7);">
+    <div id="adminPanel" style="width: 100%; max-width: 950px; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 24px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 20px; margin-bottom: 25px;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 12px; height: 12px; background: #2ed573; border-radius: 50%; box-shadow: 0 0 10px #2ed573;"></div>
-                <h2 style="font-size: 20px; margin: 0; font-weight: 700; letter-spacing: 0.5px;">Croxin Destek - Yetkili Paneli</h2>
+                <h2 style="font-size: 20px; margin: 0; font-weight: 700; color: #ffffff;">Croxin Destek - Yetkili Paneli</h2>
             </div>
             <button type="button" class="action-btn" onclick="loadAllTickets()" style="padding: 10px 18px; font-size: 13px; display: flex; align-items: center; gap: 8px;"><i class="fas fa-sync-alt"></i> Listeyi Yenile</button>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-            <!-- Biletler Listesi -->
-            <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 16px; padding: 15px; height: 420px; overflow-y: auto;" id="adminTicketList">
-                <p style="text-align: center; opacity: 0.5; font-size: 13px; margin-top: 40px;"><i class="fas fa-spinner fa-spin"></i> Biletler yükleniyor...</p>
+            <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 16px; padding: 15px; height: 420px; overflow-y: auto;" id="adminTicketList">
+                <p style="text-align: center; color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 40px;"><i class="fas fa-spinner fa-spin"></i> Biletler yükleniyor...</p>
             </div>
 
-            <!-- Seçilen Bilet Sohbet Alanı -->
-            <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; height: 420px;">
-                <div id="adminActiveTicketHeader" style="font-size: 13px; font-weight: 600; margin-bottom: 12px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; opacity: 0.8; display: flex; align-items: center; gap: 6px;">
-                    <i class="fas fa-info-circle"></i> Bir bilet seçin
+            <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; height: 420px;">
+                <div id="adminActiveTicketHeader" style="font-size: 13px; font-weight: 600; color: #ffffff; margin-bottom: 12px; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> Bir bilet seçin
                 </div>
                 <div id="adminChatMessages" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; padding-right: 5px;">
-                    <p style="text-align: center; opacity: 0.4; font-size: 13px; margin: auto;">Görüntülenecek mesaj yok</p>
+                    <p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; margin: auto;">Görüntülenecek mesaj yok</p>
                 </div>
                 <div style="display: flex; gap: 10px;">
-                    <input type="text" id="adminReplyInput" placeholder="Yetkili olarak yanıt yaz..." style="flex-grow: 1; padding: 12px 16px; background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 10px; color: #fff; outline: none; font-size: 13px; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--card-border)'" onkeypress="if(event.key === 'Enter') sendAdminReply()">
+                    <input type="text" id="adminReplyInput" placeholder="Yetkili olarak yanıt yaz..." style="flex-grow: 1; padding: 12px 16px; background: rgba(0,0,0,0.6); border: 1px solid var(--card-border); border-radius: 10px; color: #ffffff; outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') sendAdminReply()">
                     <button type="button" class="action-btn" onclick="sendAdminReply()" style="padding: 0 20px; font-size: 14px;"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
@@ -122,7 +102,7 @@
             listDiv.innerHTML = "";
 
             if (!data || Object.keys(data).length === 0) {
-                listDiv.innerHTML = '<p style="text-align: center; opacity: 0.4; font-size: 13px; margin-top: 40px;">Henüz açılmış bilet yok.</p>';
+                listDiv.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 40px;">Henüz açılmış bilet yok.</p>';
                 return;
             }
 
@@ -131,7 +111,7 @@
                 const item = document.createElement('div');
                 const isSelected = selectedAdminTicketId === ticketId;
                 item.className = `ticket-item ${isSelected ? 'active' : ''}`;
-                item.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><strong>#${ticketId}</strong><span style="font-size:10px; opacity:0.7; background:rgba(0,0,0,0.2); padding:2px 6px; border-radius:4px;">${ticket.category}</span></div><div style="font-size:12px; opacity:0.9;">${ticket.name}</div>`;
+                item.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;"><strong style="font-size:14px;">#${ticketId}</strong><span style="font-size:10px; color:${isSelected ? '#000' : 'rgba(255,255,255,0.7)'}; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${ticket.category}</span></div><div style="font-size:12px; color:${isSelected ? '#000' : 'rgba(255,255,255,0.85)'};">${ticket.name}</div>`;
                 item.onclick = () => selectAdminTicket(ticketId);
                 listDiv.appendChild(item);
             });
@@ -155,21 +135,21 @@
             const data = await res.json();
             
             if (data && data.messages) {
-                document.getElementById('adminActiveTicketHeaderinnerHTML').innerHTML = `Bilet: #${selectedAdminTicketId} | Kullanıcı: <strong>${data.name}</strong> (${data.contact})`;
+                document.getElementById('adminActiveTicketHeader').innerHTML = `<i class="fas fa-info-circle" style="color: var(--primary-color);"></i> Bilet: #${selectedAdminTicketId} | Kullanıcı: <strong style="color:var(--primary-color);">${data.name}</strong> (${data.contact})`;
                 const chatBox = document.getElementById('adminChatMessages');
                 chatBox.innerHTML = "";
                 
                 data.messages.forEach(msg => {
                     const msgDiv = document.createElement('div');
                     if (msg.type === 'system') {
-                        msgDiv.style.cssText = "text-align:center; font-size:11px; opacity:0.5; margin:6px 0; background:rgba(255,255,255,0.03); padding:4px; border-radius:6px;";
+                        msgDiv.style.cssText = "text-align:center; font-size:11px; color:rgba(255,255,255,0.6); margin:6px 0; background:rgba(255,255,255,0.05); padding:6px; border-radius:6px;";
                         msgDiv.innerText = msg.text;
                     } else if (msg.type === 'user') {
-                        msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.08); color:#fff; padding:10px 14px; border-radius:12px 12px 12px 2px; max-width:85%; font-size:13px; word-break:break-word; border: 1px solid var(--card-border);";
-                        msgDiv.innerHTML = `<span style="font-size:10px; opacity:0.6; display:block; margin-bottom:2px;">${msg.sender}</span>${msg.text}`;
+                        msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.12); color:#ffffff; padding:10px 14px; border-radius:12px 12px 12px 2px; max-width:85%; font-size:13px; word-break:break-word; border: 1px solid var(--card-border);";
+                        msgDiv.innerHTML = `<span style="font-size:10px; color:var(--primary-color); display:block; margin-bottom:2px; font-weight:600;">${msg.sender}</span>${msg.text}`;
                     } else {
-                        msgDiv.style.cssText = "align-self:flex-end; background:linear-gradient(135deg, var(--primary-color), #0077ff); color:#000; padding:10px 14px; border-radius:12px 12px 2px 12px; max-width:85%; font-size:13px; word-break:break-word; font-weight: 500; box-shadow: 0 4px 12px rgba(0,255,204,0.2);";
-                        msgDiv.innerHTML = `<span style="font-size:10px; opacity:0.7; display:block; margin-bottom:2px;">${msg.sender}</span>${msg.text}`;
+                        msgDiv.style.cssText = "align-self:flex-end; background:linear-gradient(135deg, var(--primary-color), #0077ff); color:#000000; padding:10px 14px; border-radius:12px 12px 2px 12px; max-width:85%; font-size:13px; word-break:break-word; font-weight: 600; box-shadow: 0 4px 12px rgba(0,255,204,0.2);";
+                        msgDiv.innerHTML = `<span style="font-size:10px; color:rgba(0,0,0,0.7); display:block; margin-bottom:2px; font-weight:700;">${msg.sender}</span>${msg.text}`;
                     }
                     chatBox.appendChild(msgDiv);
                 });
