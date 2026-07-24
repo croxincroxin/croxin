@@ -987,7 +987,7 @@ box-shadow: 0 0 8px var(--primary-color);
 <!-- GİRİŞ EKRANI (WELCOME SCREEN) -->
 <div class="welcome-screen" id="welcomeScreen">
     <div class="welcome-content">
-        <img class="welcome-avatar" src="https://github.com/croxincroxin.png?v=2" alt="Croxin">
+        <img class="welcome-avatar" src="https://github.com/realyusufi.png?v=2" alt="Portfolio">
         <div class="welcome-title">WELCOME TO CROXIN</div>
         <div class="welcome-sub">Developer • Designer • Community Manager</div>
         <button class="enter-btn" id="enterBtn">
@@ -1019,7 +1019,7 @@ box-shadow: 0 0 8px var(--primary-color);
 
 <header>
 
-<img class="profile" src="https://github.com/croxincroxin.png?v=2" alt="Croxin Logo">
+<img class="profile" src="https://github.com/realyusufi.png?v=2" alt="Croxin Logo">
 
 <div class="logo">CROXIN</div>
 
@@ -1027,9 +1027,43 @@ box-shadow: 0 0 8px var(--primary-color);
 
 <!-- DISCORD CANLI DURUM CARD'I -->
 <div class="discord-status-card">
-    <div class="status-indicator"></div>
-    <div class="discord-text">Discord: <strong>Croxin#0001</strong> (Aktif / Visual Studio Code)</div>
+    <div class="status-indicator" id="discordDot"></div>
+    <div class="discord-text" id="discordText">Discord: <strong>realyusufi</strong> (Bağlanıyor...)</div>
 </div>
+    <script>
+    async function updateDiscordStatus() {
+    try {
+        const response = await fetch('https://api.lanyard.rest/v1/users/1403418770009227387');
+        const data = await response.json();
+        
+        if (data.success) {
+            const user = data.data;
+            const dot = document.getElementById('discordDot');
+            const text = document.getElementById('discordText');
+            
+            let color = '#747f8d';
+            if (user.discord_status === 'online') color = '#43b581';
+            if (user.discord_status === 'idle') color = '#faa61a';
+            if (user.discord_status === 'dnd') color = '#f04747';
+            
+            dot.style.background = color;
+            dot.style.boxShadow = `0 0 10px ${color}`;
+            
+            let activityName = 'Aktif';
+            if (user.activities && user.activities.length > 0) {
+                activityName = user.activities[0].name;
+            }
+            
+            text.innerHTML = `Discord: <strong>${user.discord_user.username}</strong> (${activityName})`;
+        }
+    } catch (err) {
+        console.log("Discord durumu alınamadı");
+    }
+}
+
+updateDiscordStatus();
+setInterval(updateDiscordStatus, 5000);
+</script>
 
 <!-- GÖRÜNTÜLENME SAYACI -->
 <div class="views-counter">
