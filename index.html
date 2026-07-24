@@ -1590,5 +1590,129 @@ progressBar.addEventListener('click', (e) => {
 });
 </script>
 
+    <!-- DESTEK / TICKET BİLET SİSTEMİ BÖLÜMÜ -->
+<section id="contact">
+    <h2 class="title">🎟️ Destek & Bilet Sistemi</h2>
+    <div class="contact-container">
+        <form onsubmit="handleContact(event)">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Adınız / Rumuzunuz</label>
+                <input type="text" id="contactName" name="name" placeholder="Örn: Mehmet" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fab fa-discord"></i> Discord Veya E-Posta Adresiniz</label>
+                <input type="text" id="contactInfo" name="contact_info" placeholder="Örn: croxin_dev" required>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-tag"></i> Destek Konusu / Kategori</label>
+                <select id="contactCategory" name="category">
+                    <option value="Roblox Projesi">🎮 Roblox Projesi / Script</option>
+                    <option value="Web Tasarım">💻 Web Tasarım / Portfolyo</option>
+                    <option value="Discord Bot & Sunucu">🌐 Discord Bot & Sunucu Kurulumu</option>
+                    <option value="Diğer / Soru">❓ Diğer Konular</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label><i class="fas fa-message"></i> Talep / Mesaj Detayı</label>
+                <textarea id="contactMessage" name="message" rows="4" placeholder="Projeniz veya talebiniz hakkında detaylar verin..." required></textarea>
+            </div>
+            <button type="submit" id="submitBtn" class="send-btn"><i class="fas fa-paper-plane"></i> Destek Talebi Gönder</button>
+        </form>
+    </div>
+</section>
+
+<script>
+async function handleContact(e) {
+    e.preventDefault();
+    
+    const lastSendTime = localStorage.getItem('croxin_last_msg_time');
+    const cooldownTime = 120 * 1000;
+    const now = Date.now();
+
+    if (lastSendTime && (now - lastSendTime < cooldownTime)) {
+        const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
+        alert(`Çok sık bilet/talep gönderiyorsun! Lütfen tekrar göndermek için ${remainingSeconds} saniye bekle.`);
+        return;
+    }
+
+    const name = document.getElementById('contactName').value;
+    const info = document.getElementById('contactInfo').value;
+    const category = document.getElementById('contactCategory').value;
+    const message = document.getElementById('contactMessage').value;
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Bilet Gönderiliyor...`;
+
+    const discordPayload = {
+        embeds: [{
+            title: "🎟️ Yeni Destek Bileti Oluşturuldu!",
+            color: 3066993,
+            fields: [
+                { name: "👤 Gönderen:", value: name, inline: true },
+                { name: "📞 İletişim / Discord:", value: info, inline: true },
+                { name: "🏷️ Kategori:", value: category, inline: false },
+                { name: "💬 Talep / Mesaj:", value: message, inline: false }
+            ],
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
+
+    try {
+        const response = await fetch(workerBridgeUrl, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discordPayload)
+        });
+
+        const sonucVerisi = await response.json();
+
+        if (response.ok && sonucVerisi.success) {
+            alert("Destek biletin başarıyla Discord kanalına iletildi!");
+            e.target.reset();
+            localStorage.setItem('croxin_last_msg_time', Date.now());
+            startCooldownTimer(120);
+        } else {
+            throw new Error(sonucVerisi.error || "Bilinmeyen hata");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Destek Talebi Gönder`;
+    }
+}
+
+function startCooldownTimer(seconds) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    
+    let timeLeft = seconds;
+    const timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            submitBtn.innerHTML = `<i class="fas fa-clock"></i> Yeni Bilet İçin Bekle (${timeLeft}s)`;
+            timeLeft--;
+        } else {
+            clearInterval(timerInterval);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Destek Talebi Gönder`;
+        }
+    }, 1000);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const lastSendTime = localStorage.getItem('croxin_last_msg_time');
+    const cooldownTime = 120 * 1000;
+    const now = Date.now();
+    
+    if (lastSendTime && (now - lastSendTime < cooldownTime)) {
+        const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
+        startCooldownTimer(remainingSeconds);
+    }
+});
+</script>
+
 </body>
 </html>
