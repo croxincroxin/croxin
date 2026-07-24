@@ -64,13 +64,28 @@
 </head>
 <body>
 
-    <div id="adminPanel" style="width: 100%; max-width: 1000px; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 24px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8);">
+    <!-- Cihaz Doğrulama / Şifre Giriş Ekranı -->
+    <div id="authScreen" style="width: 100%; max-width: 400px; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 24px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; display: none;">
+        <div style="font-size: 40px; color: var(--primary-color); margin-bottom: 15px;"><i class="fas fa-shield-alt"></i></div>
+        <h2 style="font-size: 20px; margin-bottom: 10px; color: #fff;">Yetkili Doğrulaması</h2>
+        <p style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 20px;">Güvenliğiniz için bu cihaz taranıyor. Lütfen yetkili şifresini girin.</p>
+        <form onsubmit="handleAdminLogin(event)">
+            <input type="password" id="adminPasswordInput" placeholder="Yetkili Şifresi" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 10px; color: #fff; outline: none; font-size: 14px; margin-bottom: 15px; box-sizing: border-box;">
+            <button type="submit" class="action-btn" style="width: 100%; padding: 12px;"><i class="fas fa-unlock-alt"></i> Panele Giriş Yap</button>
+        </form>
+    </div>
+
+    <!-- Asıl Yetkili Paneli -->
+    <div id="adminPanel" style="width: 100%; max-width: 1000px; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 24px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); display: none; flex-direction: column;">
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 15px; margin-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <div style="width: 12px; height: 12px; background: #2ed573; border-radius: 50%; box-shadow: 0 0 10px #2ed573;"></div>
                 <h2 style="font-size: 18px; margin: 0; font-weight: 700; color: #ffffff;">Croxin Destek - Yetkili Paneli</h2>
             </div>
-            <button type="button" class="action-btn" onclick="loadAllTickets()"><i class="fas fa-sync-alt"></i> Listeyi Yenile</button>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="action-btn" onclick="loadAllTickets()"><i class="fas fa-sync-alt"></i> Listeyi Yenile</button>
+                <button type="button" class="action-btn danger-btn" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
+            </div>
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
@@ -111,9 +126,44 @@
 
     <script>
     const adminWorkerUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
+    const CORRECT_ADMIN_PASS = "croxin2026"; // Buradan şifreni değiştirebilirsin
     let selectedAdminTicketId = null;
     let adminPollInterval = null;
     let adminBase64Image = null;
+
+    // Cihaz ve Şifre Kontrolü
+    window.addEventListener('DOMContentLoaded', () => {
+        const trustedDeviceToken = localStorage.getItem('croxin_trusted_device');
+        if (trustedDeviceToken === 'verified_active') {
+            showAdminPanel();
+        } else {
+            document.getElementById('authScreen').style.display = 'block';
+        }
+    });
+
+    function handleAdminLogin(e) {
+        e.preventDefault();
+        const pass = document.getElementById('adminPasswordInput').value;
+        if (pass === CORRECT_ADMIN_PASS) {
+            localStorage.setItem('croxin_trusted_device', 'verified_active');
+            document.getElementById('authScreen').style.display = 'none';
+            showAdminPanel();
+        } else {
+            alert("Hatalı yetkili şifresi!");
+            document.getElementById('adminPasswordInput').value = "";
+        }
+    }
+
+    function logoutAdmin() {
+        localStorage.removeItem('croxin_trusted_device');
+        location.reload();
+    }
+
+    function showAdminPanel() {
+        document.getElementById('adminPanel').style.display = 'flex';
+        loadAllTickets();
+        setInterval(loadAllTickets, 5000);
+    }
 
     async function loadAllTickets() {
         try {
@@ -272,11 +322,6 @@
         if(adminPollInterval) clearInterval(adminPollInterval);
         loadAllTickets();
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-        loadAllTickets();
-        setInterval(loadAllTickets, 5000);
-    });
     </script>
 </body>
 </html>
