@@ -1629,9 +1629,17 @@ progressBar.addEventListener('click', (e) => {
                         <option value="Diğer / Soru">❓ Diğer Konular</option>
                     </select>
                 </div>
-                <div class="form-group" style="margin-bottom: 15px;">
+                <div class="form-group" style="margin-bottom: 12px;">
                     <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-message"></i> Mesajınız</label>
                     <textarea id="ticketMessage" rows="3" placeholder="Sorununuzu yazın..." required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px; resize: none;"></textarea>
+                </div>
+                <!-- Fotoğraf Ekleme Alanı -->
+                <div class="form-group" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <label style="cursor: pointer; color: var(--primary-color); font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-image" style="font-size: 16px;"></i> Görsel Ekle
+                        <input type="file" id="ticketImageInput" accept="image/*" style="display: none;" onchange="previewUserImage(this)">
+                    </label>
+                    <span id="ticketImageName" style="font-size: 11px; opacity: 0.7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
                 </div>
                 <button type="submit" id="ticketSubmitBtn" style="width: 100%; padding: 12px; background: var(--primary-color); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; font-size: 14px;"><i class="fas fa-paper-plane"></i> Bilet Oluştur</button>
             </form>
@@ -1643,12 +1651,21 @@ progressBar.addEventListener('click', (e) => {
                 <span id="ticketIdDisplay"></span>
                 <button type="button" onclick="resetTicketSession()" style="background:none; border:none; color:var(--primary-color); cursor:pointer; font-size:11px;">Yeni Bilet</button>
             </div>
-            <div id="chatMessages" style="height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 5px;">
+            <div id="chatMessages" style="height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; padding-right: 5px;">
                 <!-- Mesajlar buraya yüklenecek -->
             </div>
-            <div style="display: flex; gap: 8px;">
+            <!-- Sohbet İçi Görsel Önizleme Alanı -->
+            <div id="chatImagePreviewContainer" style="display: none; align-items: center; justify-content: space-between; font-size: 11px; color: var(--primary-color); margin-bottom: 6px; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px;">
+                <span id="chatImageName"></span>
+                <i class="fas fa-times" style="cursor:pointer; color:#ff4757;" onclick="clearUserImage()"></i>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <label style="cursor: pointer; color: var(--primary-color); font-size: 18px; padding: 0 4px;" title="Fotoğraf Yükle">
+                    <i class="fas fa-image"></i>
+                    <input type="file" id="chatImageInput" accept="image/*" style="display: none;" onchange="previewUserImage(this)">
+                </label>
                 <input type="text" id="chatReplyInput" placeholder="Mesaj yazın..." style="flex-grow: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') sendLiveReply()">
-                <button type="button" onclick="sendLiveReply()" style="padding: 0 15px; background: var(--primary-color); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer;"><i class="fas fa-paper-plane"></i></button>
+                <button type="button" onclick="sendLiveReply()" style="padding: 0 15px; background: var(--primary-color); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; height: 38px;"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
@@ -1658,6 +1675,7 @@ progressBar.addEventListener('click', (e) => {
 const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
 let currentTicketId = localStorage.getItem('croxin_active_ticket_id') || null;
 let chatPollInterval = null;
+let userBase64Image = null;
 
 function toggleLiveChat() {
     const widget = document.getElementById('liveChatWidget');
@@ -1668,6 +1686,28 @@ function toggleLiveChat() {
         widget.style.display = 'none';
         stopPolling();
     }
+}
+
+function previewUserImage(input) {
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            userBase64Image = e.target.result;
+            document.getElementById('ticketImageName').innerText = file.name;
+            document.getElementById('chatImageName').innerText = file.name;
+            document.getElementById('chatImagePreviewContainer').style.display = 'flex';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function clearUserImage() {
+    userBase64Image = null;
+    document.getElementById('ticketImageInput').value = "";
+    document.getElementById('chatImageInput').value = "";
+    document.getElementById('ticketImageName').innerText = "";
+    document.getElementById('chatImagePreviewContainer').style.display = 'none';
 }
 
 async function handleLiveTicket(e) {
@@ -1685,7 +1725,14 @@ async function handleLiveTicket(e) {
         const response = await fetch(workerBridgeUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: "create_ticket", name, contact, category, message })
+            body: JSON.stringify({ 
+                action: "create_ticket", 
+                name, 
+                contact, 
+                category, 
+                message, 
+                image: userBase64Image 
+            })
         });
         const data = await response.json();
 
@@ -1694,6 +1741,7 @@ async function handleLiveTicket(e) {
             localStorage.setItem('croxin_active_ticket_id', currentTicketId);
             localStorage.setItem('croxin_ticket_name', name);
 
+            clearUserImage();
             document.getElementById('ticketFormContainer').style.display = 'none';
             document.getElementById('liveChatBox').style.display = 'flex';
             document.getElementById('ticketIdDisplay').innerText = `Bilet ID: #${currentTicketId}`;
@@ -1715,9 +1763,11 @@ async function sendLiveReply() {
     const input = document.getElementById('chatReplyInput');
     const text = input.value.trim();
     const savedName = localStorage.getItem('croxin_ticket_name') || "Kullanıcı";
-    if (!text || !currentTicketId) return;
+    if ((!text && !userBase64Image) || !currentTicketId) return;
 
+    const currentImg = userBase64Image;
     input.value = "";
+    clearUserImage();
 
     try {
         await fetch(workerBridgeUrl, {
@@ -1727,8 +1777,9 @@ async function sendLiveReply() {
                 action: "send_message",
                 ticketId: currentTicketId,
                 sender: savedName,
-                text: text,
-                type: "user"
+                text: text || "Görsel gönderildi.",
+                type: "user",
+                image: currentImg
             })
         });
         loadMessages();
@@ -1749,15 +1800,19 @@ async function loadMessages() {
             
             data.messages.forEach(msg => {
                 const msgDiv = document.createElement('div');
+                const timeText = msg.time ? `<span style="font-size:9px; opacity:0.7; float:right; margin-left:8px; margin-top:2px;">${msg.time}</span>` : '';
+                
                 if (msg.type === 'system') {
                     msgDiv.style.cssText = "text-align:center; font-size:11px; opacity:0.6; margin:4px 0;";
-                    msgDiv.innerText = msg.text;
+                    msgDiv.innerHTML = `${msg.text} ${timeText}`;
                 } else if (msg.type === 'user') {
                     msgDiv.style.cssText = "align-self:flex-end; background:var(--primary-color); color:#000; padding:8px 12px; border-radius:10px 10px 0 10px; max-width:85%; font-size:13px; word-break:break-word;";
-                    msgDiv.innerHTML = `<strong>Sen:</strong> ${msg.text}`;
+                    let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:6px; margin-top:6px; display:block;" />` : '';
+                    msgDiv.innerHTML = `<strong>Sen:</strong> ${msg.text}${imgHtml}${timeText}`;
                 } else {
                     msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.15); color:#fff; padding:8px 12px; border-radius:10px 10px 10px 0; max-width:85%; font-size:13px; word-break:break-word; border-left: 3px solid var(--primary-color);";
-                    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+                    let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:6px; margin-top:6px; display:block;" />` : '';
+                    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}${imgHtml}${timeText}`;
                 }
                 chatMessages.appendChild(msgDiv);
             });
@@ -1781,6 +1836,7 @@ function resetTicketSession() {
         localStorage.removeItem('croxin_ticket_name');
         currentTicketId = null;
         stopPolling();
+        clearUserImage();
         document.getElementById('liveChatBox').style.display = 'none';
         document.getElementById('ticketFormContainer').style.display = 'block';
         document.getElementById('chatMessages').innerHTML = '';
@@ -1797,6 +1853,5 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
 </body>
 </html>
