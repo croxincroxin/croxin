@@ -1,0 +1,129 @@
+<!-- YÖNETİCİ / YETKİLİ PANELİ -->
+<div id="adminPanel" style="max-width: 800px; margin: 40px auto; background: rgba(15, 15, 25, 0.95); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 20px; padding: 25px; color: #fff; box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
+    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px;">
+        <h2 style="font-size: 20px; margin: 0;"><i class="fas fa-shield-alt" style="color: var(--primary-color);"></i> Croxin Destek - Yetkili Paneli</h2>
+        <button type="button" onclick="loadAllTickets()" style="padding: 8px 15px; background: var(--primary-color); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer;"><i class="fas fa-sync"></i> Listeyi Yenile</button>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+        <!-- Biletler Listesi -->
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; height: 350px; overflow-y: auto;" id="adminTicketList">
+            <p style="text-align: center; opacity: 0.6; font-size: 13px; margin-top: 20px;">Biletler yükleniyor...</p>
+        </div>
+
+        <!-- Seçilen Bilet Sohbet Alanı -->
+        <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; height: 350px;">
+            <div id="adminActiveTicketHeader" style="font-size: 13px; font-weight: 600; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; opacity: 0.8;">
+                Bir bilet seçin
+            </div>
+            <div id="adminChatMessages" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; padding-right: 5px;">
+                <p style="text-align: center; opacity: 0.5; font-size: 13px; margin-top: auto; margin-bottom: auto;">Görüntülenecek mesaj yok</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="adminReplyInput" placeholder="Yetkili olarak yanıt yaz..." style="flex-grow: 1; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') sendAdminReply()">
+                <button type="button" onclick="sendAdminReply()" style="padding: 0 15px; background: var(--primary-color); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer;"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const adminWorkerUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
+let selectedAdminTicketId = null;
+let adminPollInterval = null;
+
+async function loadAllTickets() {
+    try {
+        const res = await fetch(`${adminWorkerUrl}?action=get_all_tickets`);
+        const data = await res.json();
+        const listDiv = document.getElementById('adminTicketList');
+        listDiv.innerHTML = "";
+
+        if (!data || Object.keys(data).length === 0) {
+            listDiv.innerHTML = '<p style="text-align: center; opacity: 0.5; font-size: 13px; margin-top: 20px;">Henüz açılmış bilet yok.</p>';
+            return;
+        }
+
+        Object.keys(data).forEach(ticketId => {
+            const ticket = data[ticketId];
+            const item = document.createElement('div');
+            item.style.cssText = `padding: 10px; margin-bottom: 8px; background: ${selectedAdminTicketId === ticketId ? 'var(--primary-color)' : 'rgba(255,255,255,0.05)'}; color: ${selectedAdminTicketId === ticketId ? '#000' : '#fff'}; border-radius: 8px; cursor: pointer; font-size: 13px; transition: background 0.2s;`;
+            item.innerHTML = `<strong>#${ticketId}</strong><br><span style="font-size:11px; opacity:0.8;">${ticket.name} (${ticket.category})</span>`;
+            item.onclick = () => selectAdminTicket(ticketId);
+            listDiv.appendChild(item);
+        });
+    } catch (e) {
+        console.error("Biletler yüklenemedi", e);
+    }
+}
+
+async function selectAdminTicket(ticketId) {
+    selectedAdminTicketId = ticketId;
+    loadAdminMessages();
+    if (adminPollInterval) clearInterval(adminPollInterval);
+    adminPollInterval = setInterval(loadAdminMessages, 3000); // Sürekli güncelle
+    loadAllTickets();
+}
+
+async function loadAdminMessages() {
+    if (!selectedAdminTicketId) return;
+    try {
+        const res = await fetch(`${adminWorkerUrl}?action=get_ticket&ticketId=${selectedAdminTicketId}`);
+        const data = await res.json();
+        
+        if (data && data.messages) {
+            document.getElementById('adminActiveTicketHeader').innerHTML = `Bilet: #${selectedAdminTicketId} | Kullanıcı: <strong>${data.name}</strong> (${data.contact})`;
+            const chatBox = document.getElementById('adminChatMessages');
+            chatBox.innerHTML = "";
+            
+            data.messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                if (msg.type === 'system') {
+                    msgDiv.style.cssText = "text-align:center; font-size:11px; opacity:0.6; margin:4px 0;";
+                    msgDiv.innerText = msg.text;
+                } else if (msg.type === 'user') {
+                    msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.15); color:#fff; padding:8px 12px; border-radius:10px 10px 10px 0; max-width:85%; font-size:13px; word-break:break-word;";
+                    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+                } else {
+                    // Yetkili mesajı
+                    msgDiv.style.cssText = "align-self:flex-end; background:var(--primary-color); color:#000; padding:8px 12px; border-radius:10px 10px 0 10px; max-width:85%; font-size:13px; word-break:break-word;";
+                    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+                }
+                chatBox.appendChild(msgDiv);
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    } catch (e) {}
+}
+
+async function sendAdminReply() {
+    const input = document.getElementById('adminReplyInput');
+    const text = input.value.trim();
+    if (!text || !selectedAdminTicketId) return;
+
+    input.value = "";
+
+    try {
+        await fetch(adminWorkerUrl, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: "send_message",
+                ticketId: selectedAdminTicketId,
+                sender: "Yusuf (Yetkili)",
+                text: text,
+                type: "admin"
+            })
+        });
+        loadAdminMessages();
+    } catch (err) {
+        console.error("Yetkili mesajı gönderilemedi", err);
+    }
+}
+
+// Sayfa açıldığında biletleri yükle ve her 5 saniyede bir listeyi tazele
+window.addEventListener('DOMContentLoaded', () => {
+    loadAllTickets();
+    setInterval(loadAllTickets, 5000);
+});
+</script>
