@@ -1030,6 +1030,7 @@ box-shadow: 0 0 8px var(--primary-color);
     <div class="status-indicator" id="discordDot"></div>
     <div class="discord-text" id="discordText">Discord: <strong>realyusufi</strong> (Bağlanıyor...)</div>
 </div>
+    <script>
     async function updateDiscordStatus() {
     try {
         const response = await fetch('https://api.lanyard.rest/v1/users/1403418770009227387');
@@ -1062,6 +1063,7 @@ box-shadow: 0 0 8px var(--primary-color);
 
 updateDiscordStatus();
 setInterval(updateDiscordStatus, 5000);
+</script>
 
 <!-- GÖRÜNTÜLENME SAYACI -->
 <div class="views-counter">
