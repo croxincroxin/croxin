@@ -1592,14 +1592,11 @@ progressBar.addEventListener('click', (e) => {
 
 <!-- DESTEK / CANLI BİLET SİSTEMİ BÖLÜMÜ -->
 <section id="contact" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-    <!-- Küçültülmüş Canlı Destek Butonu -->
     <div id="liveChatTrigger" onclick="toggleLiveChat()" style="background: linear-gradient(135deg, var(--primary-color), #0077ff); color: #000; padding: 14px 22px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; transition: transform 0.2s;">
         <i class="fas fa-headset" style="font-size: 20px;"></i>
         <span>Canlı Destek</span>
-        <span id="chatNotificationBadge" style="display:none; background: #ff4757; color: #fff; width: 10px; height: 10px; border-radius: 50%;"></span>
     </div>
 
-    <!-- Açılır Canlı Sohbet / Bilet Paneli -->
     <div id="liveChatWidget" style="display: none; width: 360px; background: rgba(15, 15, 25, 0.95); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); overflow: hidden; flex-direction: column;">
         <div style="background: rgba(0,0,0,0.4); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
             <div style="display: flex; align-items: center; gap: 8px;">
@@ -1612,15 +1609,15 @@ progressBar.addEventListener('click', (e) => {
         <!-- Form Ekranı -->
         <div id="ticketFormContainer" style="padding: 20px;">
             <form id="ticketForm" onsubmit="handleLiveTicket(event)">
-                <div class="form-group" style="margin-bottom: 12px;">
+                <div style="margin-bottom: 12px;">
                     <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-user"></i> Adınız / Rumuzunuz</label>
                     <input type="text" id="ticketName" placeholder="Örn: Yusuf" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;">
                 </div>
-                <div class="form-group" style="margin-bottom: 12px;">
+                <div style="margin-bottom: 12px;">
                     <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fab fa-discord"></i> Discord / İletişim</label>
                     <input type="text" id="ticketContact" placeholder="Örn: croxin_dev" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;">
                 </div>
-                <div class="form-group" style="margin-bottom: 12px;">
+                <div style="margin-bottom: 12px;">
                     <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-tag"></i> Kategori</label>
                     <select id="ticketCategory" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;">
                         <option value="Roblox Projesi">🎮 Roblox Projesi / Script</option>
@@ -1629,12 +1626,11 @@ progressBar.addEventListener('click', (e) => {
                         <option value="Diğer / Soru">❓ Diğer Konular</option>
                     </select>
                 </div>
-                <div class="form-group" style="margin-bottom: 12px;">
+                <div style="margin-bottom: 12px;">
                     <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-message"></i> Mesajınız</label>
                     <textarea id="ticketMessage" rows="3" placeholder="Sorununuzu yazın..." required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px; resize: none;"></textarea>
                 </div>
-                <!-- Bilet Açarken Fotoğraf Yükleme Alanı -->
-                <div class="form-group" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                <div style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                     <label style="cursor: pointer; color: var(--primary-color); font-size: 13px; display: flex; align-items: center; gap: 6px;">
                         <i class="fas fa-image" style="font-size: 16px;"></i> Görsel Ekle
                         <input type="file" id="ticketImageInput" accept="image/*" style="display: none;" onchange="previewUserImage(this)">
@@ -1651,10 +1647,7 @@ progressBar.addEventListener('click', (e) => {
                 <span id="ticketIdDisplay"></span>
                 <button type="button" onclick="resetTicketSession()" style="background:none; border:none; color:var(--primary-color); cursor:pointer; font-size:11px;">Yeni Bilet</button>
             </div>
-            <div id="chatMessages" style="height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; padding-right: 5px;">
-                <!-- Mesajlar buraya yüklenecek -->
-            </div>
-            <!-- Sohbet İçi Görsel Önizleme Alanı -->
+            <div id="chatMessages" style="height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; padding-right: 5px;"></div>
             <div id="chatImagePreviewContainer" style="display: none; align-items: center; justify-content: space-between; font-size: 11px; color: var(--primary-color); margin-bottom: 6px; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px;">
                 <span id="chatImageName"></span>
                 <i class="fas fa-times" style="cursor:pointer; color:#ff4757;" onclick="clearUserImage()"></i>
@@ -1732,14 +1725,7 @@ async function handleLiveTicket(e) {
         const response = await fetch(workerBridgeUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                action: "create_ticket", 
-                name: name, 
-                contact: contact, 
-                category: category, 
-                message: message, 
-                image: userBase64Image 
-            })
+            body: JSON.stringify({ action: "create_ticket", name, contact, category, message, image: userBase64Image })
         });
         const data = await response.json();
 
@@ -1760,7 +1746,7 @@ async function handleLiveTicket(e) {
         }
     } catch (err) {
         console.error(err);
-        alert("Bilet oluşturulurken bir hata oluştu.");
+        alert("Bilet oluşturulurken hata oluştu.");
     } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fas fa-paper-plane"></i> Bilet Oluştur`;
@@ -1781,14 +1767,7 @@ async function sendLiveReply() {
         await fetch(workerBridgeUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                action: "send_message",
-                ticketId: currentTicketId,
-                sender: savedName,
-                text: text || "Görsel gönderildi.",
-                type: "user",
-                image: currentImg
-            })
+            body: JSON.stringify({ action: "send_message", ticketId: currentTicketId, sender: savedName, text: text || "Görsel gönderildi.", type: "user", image: currentImg })
         });
         loadMessages();
     } catch (err) {
@@ -1853,7 +1832,6 @@ function resetTicketSession() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    // Eğer daha önceden tarayıcılarda bozuk/eski bir ID kaldıysa ve admin panelinde yoksa çakışmasın diye temizleme butonuyla çözüldü
     if (currentTicketId) {
         const fContainer = document.getElementById('ticketFormContainer');
         const cBox = document.getElementById('liveChatBox');
@@ -1865,7 +1843,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
-
     
 </body>
 </html>
