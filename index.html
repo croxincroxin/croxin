@@ -1868,4 +1868,56 @@ chatSend.addEventListener('click', handleUserMessage);
 chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleUserMessage();
 });
+    });
+});
+
+// ŞARKILAR 
+const playlist = [
+    {
+        title: "Croxin - Synthwave Vibe",
+        src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"
+    },
+    {
+        title: "Croxin - Cyberpunk Chill",
+        src: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=chill-soul-summers-10738.mp3"
+    },
+    {
+        title: "Croxin - Neon Night",
+        src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c2a737f8.mp3?filename=spaced-out-10641.mp3"
+    }
+];
+
+let currentTrackIndex = 0;
+const audio = document.getElementById('audioPlayer');
+const songTitleEl = document.getElementById('songTitle');
+
+function loadTrack(index) {
+    if (!audio) return;
+    audio.src = playlist[index].src;
+    if (songTitleEl) songTitleEl.textContent = playlist[index].title;
+    audio.load();
+}
+
+loadTrack(currentTrackIndex);
+
+function nextSong() {
+    currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
+    loadTrack(currentTrackIndex);
+    audio.play().catch(e => console.log("Oynatma hatası:", e));
+    if (playIcon) playIcon.className = 'fas fa-pause';
+}
+
+function prevSong() {
+    currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
+    loadTrack(currentTrackIndex);
+    audio.play().catch(e => console.log("Oynatma hatası:", e));
+    if (playIcon) playIcon.className = 'fas fa-pause';
+}
+
+if (audio) {
+    audio.addEventListener('ended', () => {
+        nextSong();
+    });
+}
+
 </script>
