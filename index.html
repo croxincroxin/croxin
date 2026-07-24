@@ -1592,7 +1592,7 @@ progressBar.addEventListener('click', (e) => {
 
 <!-- DESTEK / CANLI BİLET SİSTEMİ BÖLÜMÜ -->
 <section id="contact" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
-    <!-- Küçültülmüş Canlı Destek Butonu (İtemsatış Tarzı) -->
+    <!-- Küçültülmüş Canlı Destek Butonu -->
     <div id="liveChatTrigger" onclick="toggleLiveChat()" style="background: linear-gradient(135deg, var(--primary-color), #0077ff); color: #000; padding: 14px 22px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; transition: transform 0.2s;">
         <i class="fas fa-headset" style="font-size: 20px;"></i>
         <span>Canlı Destek</span>
@@ -1644,7 +1644,7 @@ progressBar.addEventListener('click', (e) => {
                 <button type="button" onclick="resetTicketSession()" style="background:none; border:none; color:var(--primary-color); cursor:pointer; font-size:11px;">Yeni Bilet</button>
             </div>
             <div id="chatMessages" style="height: 240px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 5px;">
-                <!-- Mesajlar -->
+                <!-- Mesajlar buraya yüklenecek -->
             </div>
             <div style="display: flex; gap: 8px;">
                 <input type="text" id="chatReplyInput" placeholder="Mesaj yazın..." style="flex-grow: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') sendLiveReply()">
@@ -1655,20 +1655,23 @@ progressBar.addEventListener('click', (e) => {
 </section>
 
 <script>
+const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
 let currentTicketId = localStorage.getItem('croxin_active_ticket_id') || null;
+let chatPollInterval = null;
 
 function toggleLiveChat() {
     const widget = document.getElementById('liveChatWidget');
     if (widget.style.display === 'none' || widget.style.display === '') {
         widget.style.display = 'flex';
+        if (currentTicketId) startPolling();
     } else {
         widget.style.display = 'none';
+        stopPolling();
     }
 }
 
 async function handleLiveTicket(e) {
     e.preventDefault();
-    
     const name = document.getElementById('ticketName').value;
     const contact = document.getElementById('ticketContact').value;
     const category = document.getElementById('ticketCategory').value;
@@ -1676,47 +1679,29 @@ async function handleLiveTicket(e) {
 
     const btn = document.getElementById('ticketSubmitBtn');
     btn.disabled = true;
-    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...`;
-
-    const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
-
-    const discordPayload = {
-        embeds: [{
-            title: "🎟️ Yeni Canlı Destek Bileti!",
-            color: 3066993,
-            fields: [
-                { name: "👤 Gönderen:", value: name, inline: true },
-                { name: "📞 İletişim / Discord:", value: contact, inline: true },
-                { name: "🏷️ Kategori:", value: category, inline: false },
-                { name: "💬 İlk Mesaj:", value: message, inline: false }
-            ],
-            timestamp: new Date().toISOString()
-        }]
-    };
+    btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Oluşturuluyor...`;
 
     try {
         const response = await fetch(workerBridgeUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(discordPayload)
+            body: JSON.stringify({ action: "create_ticket", name, contact, category, message })
         });
+        const data = await response.json();
 
-        if (response.ok) {
-            currentTicketId = "CRX-" + Math.floor(100000 + Math.random() * 900000);
+        if (response.ok && data.success) {
+            currentTicketId = data.ticketId;
             localStorage.setItem('croxin_active_ticket_id', currentTicketId);
             localStorage.setItem('croxin_ticket_name', name);
-            
+
             document.getElementById('ticketFormContainer').style.display = 'none';
             document.getElementById('liveChatBox').style.display = 'flex';
             document.getElementById('ticketIdDisplay').innerText = `Bilet ID: #${currentTicketId}`;
-            
-            appendChatMessage("Sistem", "Biletin Discord'a iletildi! Ekibimiz dönecek.", "system");
-            appendChatMessage(name, message, "user");
 
-            btn.disabled = false;
-            btn.innerHTML = `<i class="fas fa-paper-plane"></i> Bilet Oluştur`;
+            loadMessages();
+            startPolling();
         } else {
-            throw new Error("Hata oluştu");
+            throw new Error("Bilet oluşturulamadı");
         }
     } catch (err) {
         console.error(err);
@@ -1726,25 +1711,6 @@ async function handleLiveTicket(e) {
     }
 }
 
-function appendChatMessage(sender, text, type) {
-    const chatMessages = document.getElementById('chatMessages');
-    const msgDiv = document.createElement('div');
-    
-    if (type === 'system') {
-        msgDiv.style.cssText = "text-align:center; font-size:11px; opacity:0.6; margin:4px 0;";
-        msgDiv.innerText = text;
-    } else if (type === 'user') {
-        msgDiv.style.cssText = "align-self:flex-end; background:var(--primary-color); color:#000; padding:8px 12px; border-radius:10px 10px 0 10px; max-width:85%; font-size:13px; word-break:break-word;";
-        msgDiv.innerHTML = `<strong>Sen:</strong> ${text}`;
-    } else {
-        msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.1); color:#fff; padding:8px 12px; border-radius:10px 10px 10px 0; max-width:85%; font-size:13px; word-break:break-word;";
-        msgDiv.innerHTML = `<strong>${sender}:</strong> ${text}`;
-    }
-    
-    chatMessages.appendChild(msgDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
 async function sendLiveReply() {
     const input = document.getElementById('chatReplyInput');
     const text = input.value.trim();
@@ -1752,29 +1718,61 @@ async function sendLiveReply() {
     if (!text || !currentTicketId) return;
 
     input.value = "";
-    appendChatMessage("Sen", text, "user");
-
-    const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
-    const replyPayload = {
-        embeds: [{
-            title: `💬 Bilet İçi Mesaj (#${currentTicketId})`,
-            color: 3447003,
-            fields: [
-                { name: `👤 ${savedName}:`, value: text, inline: false }
-            ],
-            timestamp: new Date().toISOString()
-        }]
-    };
 
     try {
         await fetch(workerBridgeUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(replyPayload)
+            body: JSON.stringify({
+                action: "send_message",
+                ticketId: currentTicketId,
+                sender: savedName,
+                text: text,
+                type: "user"
+            })
         });
+        loadMessages();
     } catch (err) {
-        console.error(err);
+        console.error("Mesaj gönderilemedi", err);
     }
+}
+
+async function loadMessages() {
+    if (!currentTicketId) return;
+    try {
+        const res = await fetch(`${workerBridgeUrl}?action=get_ticket&ticketId=${currentTicketId}`);
+        const data = await res.json();
+        
+        if (data && data.messages) {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = "";
+            
+            data.messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                if (msg.type === 'system') {
+                    msgDiv.style.cssText = "text-align:center; font-size:11px; opacity:0.6; margin:4px 0;";
+                    msgDiv.innerText = msg.text;
+                } else if (msg.type === 'user') {
+                    msgDiv.style.cssText = "align-self:flex-end; background:var(--primary-color); color:#000; padding:8px 12px; border-radius:10px 10px 0 10px; max-width:85%; font-size:13px; word-break:break-word;";
+                    msgDiv.innerHTML = `<strong>Sen:</strong> ${msg.text}`;
+                } else {
+                    msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.15); color:#fff; padding:8px 12px; border-radius:10px 10px 10px 0; max-width:85%; font-size:13px; word-break:break-word; border-left: 3px solid var(--primary-color);";
+                    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}`;
+                }
+                chatMessages.appendChild(msgDiv);
+            });
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    } catch (e) {}
+}
+
+function startPolling() {
+    if (chatPollInterval) clearInterval(chatPollInterval);
+    chatPollInterval = setInterval(loadMessages, 3000);
+}
+
+function stopPolling() {
+    if (chatPollInterval) clearInterval(chatPollInterval);
 }
 
 function resetTicketSession() {
@@ -1782,6 +1780,7 @@ function resetTicketSession() {
         localStorage.removeItem('croxin_active_ticket_id');
         localStorage.removeItem('croxin_ticket_name');
         currentTicketId = null;
+        stopPolling();
         document.getElementById('liveChatBox').style.display = 'none';
         document.getElementById('ticketFormContainer').style.display = 'block';
         document.getElementById('chatMessages').innerHTML = '';
@@ -1794,7 +1793,7 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('ticketFormContainer').style.display = 'none';
         document.getElementById('liveChatBox').style.display = 'flex';
         document.getElementById('ticketIdDisplay').innerText = `Bilet ID: #${currentTicketId}`;
-        appendChatMessage("Sistem", "Aktif bilet oturumuna bağlandın.", "system");
+        loadMessages();
     }
 });
 </script>
