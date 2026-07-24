@@ -1590,6 +1590,87 @@ progressBar.addEventListener('click', (e) => {
 });
 </script>
 
+<!-- DESTEK / CANLI BİLET SİSTEMİ BÖLÜMÜ -->
+<section id="contact" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+    <!-- Küçültülmüş Canlı Destek Butonu -->
+    <div id="liveChatTrigger" onclick="toggleLiveChat()" style="background: linear-gradient(135deg, var(--primary-color), #0077ff); color: #000; padding: 14px 22px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; transition: transform 0.2s;">
+        <i class="fas fa-headset" style="font-size: 20px;"></i>
+        <span>Canlı Destek</span>
+        <span id="chatNotificationBadge" style="display:none; background: #ff4757; color: #fff; width: 10px; height: 10px; border-radius: 50%;"></span>
+    </div>
+
+    <!-- Açılır Canlı Sohbet / Bilet Paneli -->
+    <div id="liveChatWidget" style="display: none; width: 360px; background: rgba(15, 15, 25, 0.95); backdrop-filter: blur(12px); border: 1px solid var(--card-border); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); overflow: hidden; flex-direction: column;">
+        <div style="background: rgba(0,0,0,0.4); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="width: 10px; height: 10px; background: #2ed573; border-radius: 50%; display: inline-block;"></span>
+                <span style="font-weight: 600; color: #fff; font-size: 15px;">Canlı Destek & Bilet</span>
+            </div>
+            <button type="button" onclick="toggleLiveChat()" style="background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; opacity: 0.7;"><i class="fas fa-times"></i></button>
+        </div>
+
+        <!-- Form Ekranı -->
+        <div id="ticketFormContainer" style="padding: 20px;">
+            <form id="ticketForm" onsubmit="handleLiveTicket(event)">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-user"></i> Adınız / Rumuzunuz</label>
+                    <input type="text" id="ticketName" placeholder="Örn: Yusuf" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fab fa-discord"></i> Discord / İletişim</label>
+                    <input type="text" id="ticketContact" placeholder="Örn: croxin_dev" required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-tag"></i> Kategori</label>
+                    <select id="ticketCategory" style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;">
+                        <option value="Roblox Projesi">🎮 Roblox Projesi / Script</option>
+                        <option value="Web Tasarım">💻 Web Tasarım / Portfolyo</option>
+                        <option value="Discord Bot & Sunucu">🌐 Discord Bot & Sunucu</option>
+                        <option value="Diğer / Soru">❓ Diğer Konular</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-message"></i> Mesajınız</label>
+                    <textarea id="ticketMessage" rows="3" placeholder="Sorununuzu yazın..." required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px; resize: none;"></textarea>
+                </div>
+                <!-- Bilet Açarken Fotoğraf Yükleme Alanı -->
+                <div class="form-group" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                    <label style="cursor: pointer; color: var(--primary-color); font-size: 13px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-image" style="font-size: 16px;"></i> Görsel Ekle
+                        <input type="file" id="ticketImageInput" accept="image/*" style="display: none;" onchange="previewUserImage(this)">
+                    </label>
+                    <span id="ticketImageName" style="font-size: 11px; opacity: 0.7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+                </div>
+                <button type="submit" id="ticketSubmitBtn" style="width: 100%; padding: 12px; background: var(--primary-color); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; font-size: 14px;"><i class="fas fa-paper-plane"></i> Bilet Oluştur</button>
+            </form>
+        </div>
+
+        <!-- Canlı Sohbet Ekranı -->
+        <div id="liveChatBox" style="display:none; padding: 15px; flex-direction: column;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:12px; opacity:0.7;">
+                <span id="ticketIdDisplay"></span>
+                <button type="button" onclick="resetTicketSession()" style="background:none; border:none; color:var(--primary-color); cursor:pointer; font-size:11px;">Yeni Bilet</button>
+            </div>
+            <div id="chatMessages" style="height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; padding-right: 5px;">
+                <!-- Mesajlar buraya yüklenecek -->
+            </div>
+            <!-- Sohbet İçi Görsel Önizleme Alanı -->
+            <div id="chatImagePreviewContainer" style="display: none; align-items: center; justify-content: space-between; font-size: 11px; color: var(--primary-color); margin-bottom: 6px; background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px;">
+                <span id="chatImageName"></span>
+                <i class="fas fa-times" style="cursor:pointer; color:#ff4757;" onclick="clearUserImage()"></i>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <label style="cursor: pointer; color: var(--primary-color); font-size: 18px; padding: 0 4px;" title="Fotoğraf Yükle">
+                    <i class="fas fa-image"></i>
+                    <input type="file" id="chatImageInput" accept="image/*" style="display: none;" onchange="previewUserImage(this)">
+                </label>
+                <input type="text" id="chatReplyInput" placeholder="Mesaj yazın..." style="flex-grow: 1; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') sendLiveReply()">
+                <button type="button" onclick="sendLiveReply()" style="padding: 0 15px; background: var(--primary-color); border: none; border-radius: 8px; color: #000; font-weight: 700; cursor: pointer; height: 38px;"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+</section>
+
 <script>
 const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
 let currentTicketId = localStorage.getItem('croxin_active_ticket_id') || null;
@@ -1613,9 +1694,12 @@ function previewUserImage(input) {
         const reader = new FileReader();
         reader.onload = function(e) {
             userBase64Image = e.target.result;
-            document.getElementById('ticketImageName').innerText = file.name;
-            document.getElementById('chatImageName').innerText = file.name;
-            document.getElementById('chatImagePreviewContainer').style.display = 'flex';
+            const tName = document.getElementById('ticketImageName');
+            const cName = document.getElementById('chatImageName');
+            const cPrev = document.getElementById('chatImagePreviewContainer');
+            if(tName) tName.innerText = file.name;
+            if(cName) cName.innerText = file.name;
+            if(cPrev) cPrev.style.display = 'flex';
         };
         reader.readAsDataURL(file);
     }
@@ -1627,8 +1711,10 @@ function clearUserImage() {
     const cInput = document.getElementById('chatImageInput');
     if (tInput) tInput.value = "";
     if (cInput) cInput.value = "";
-    document.getElementById('ticketImageName').innerText = "";
-    document.getElementById('chatImagePreviewContainer').style.display = 'none';
+    const tImgName = document.getElementById('ticketImageName');
+    const cImgPrev = document.getElementById('chatImagePreviewContainer');
+    if(tImgName) tImgName.innerText = "";
+    if(cImgPrev) cImgPrev.style.display = 'none';
 }
 
 async function handleLiveTicket(e) {
@@ -1674,9 +1760,8 @@ async function handleLiveTicket(e) {
         }
     } catch (err) {
         console.error(err);
-        alert("Bilet oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.");
+        alert("Bilet oluşturulurken bir hata oluştu.");
     } finally {
-        // Hata olsun veya olmasın butonun takılı kalmasını önlemek için eski haline döndürülür
         btn.disabled = false;
         btn.innerHTML = `<i class="fas fa-paper-plane"></i> Bilet Oluştur`;
     }
@@ -1768,14 +1853,19 @@ function resetTicketSession() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+    // Eğer daha önceden tarayıcılarda bozuk/eski bir ID kaldıysa ve admin panelinde yoksa çakışmasın diye temizleme butonuyla çözüldü
     if (currentTicketId) {
-        document.getElementById('ticketFormContainer').style.display = 'none';
-        document.getElementById('liveChatBox').style.display = 'flex';
-        document.getElementById('ticketIdDisplay').innerText = `Bilet ID: #${currentTicketId}`;
+        const fContainer = document.getElementById('ticketFormContainer');
+        const cBox = document.getElementById('liveChatBox');
+        const tIdDisplay = document.getElementById('ticketIdDisplay');
+        if(fContainer) fContainer.style.display = 'none';
+        if(cBox) cBox.style.display = 'flex';
+        if(tIdDisplay) tIdDisplay.innerText = `Bilet ID: #${currentTicketId}`;
         loadMessages();
     }
 });
 </script>
+
     
 </body>
 </html>
