@@ -2,360 +2,162 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Croxin Destek - Yetkili Paneli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #00ffcc;
-            --bg-color: #0b0b16;
-            --card-bg: rgba(18, 18, 30, 0.95);
-            --card-border: rgba(255, 255, 255, 0.15);
+            --bg-dark: #0f111a;
+            --card-bg: #181b28;
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary-color: #2ed573;
         }
-        body {
-            background: var(--bg-color);
-            color: #ffffff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
-        .ticket-item {
-            padding: 12px;
-            margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 13px;
-            color: #ffffff;
-            transition: all 0.2s ease;
-        }
-        .ticket-item:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
-        .ticket-item.active {
-            background: linear-gradient(135deg, var(--primary-color), #0077ff);
-            color: #000000;
-            border-color: transparent;
-            font-weight: 700;
-            box-shadow: 0 4px 15px rgba(0, 255, 204, 0.3);
-        }
-        .ticket-item.active span { background: rgba(0, 0, 0, 0.2) !important; color: #000000 !important; }
-        .action-btn {
-            background: linear-gradient(135deg, var(--primary-color), #0077ff);
-            border: none;
-            border-radius: 8px;
-            color: #000000;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            padding: 10px 16px;
-            font-size: 13px;
-        }
-        .action-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0, 255, 204, 0.4); }
-        .danger-btn { background: linear-gradient(135deg, #ff4757, #ff6b81); color: #fff; }
-        .warning-btn { background: linear-gradient(135deg, #ffa502, #ff7f50); color: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg-dark); color: #fff; padding: 20px; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        
+        #adminPanel { width: 100%; max-width: 1100px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 25px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 20px; }
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 15px; }
+        
+        .admin-body { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 500px; }
+        .ticket-list-panel { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .ticket-card { padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .ticket-card:hover, .ticket-card.active { background: rgba(46, 213, 115, 0.1); border-color: var(--primary-color); }
+        .ticket-card h4 { font-size: 14px; margin-bottom: 4px; color: #fff; }
+        .ticket-card p { font-size: 12px; opacity: 0.7; }
+
+        .chat-pane { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; padding: 15px; }
+        .chat-messages-box { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
     </style>
 </head>
 <body>
 
-    <!-- Cihaz Doğrulama / Şifre Giriş Ekranı -->
-    <div id="authScreen" style="width: 100%; max-width: 400px; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 24px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; display: none;">
-        <div style="font-size: 40px; color: var(--primary-color); margin-bottom: 15px;"><i class="fas fa-shield-alt"></i></div>
-        <h2 style="font-size: 20px; margin-bottom: 10px; color: #fff;">Yetkili Doğrulaması</h2>
-        <p style="font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 20px;">Güvenliğiniz için bu cihaz taranıyor. Lütfen yetkili şifresini girin.</p>
-        <form onsubmit="handleAdminLogin(event)">
-            <input type="password" id="adminPasswordInput" placeholder="Yetkili Şifresi" required style="width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 10px; color: #fff; outline: none; font-size: 14px; margin-bottom: 15px; box-sizing: border-box;">
-            <button type="submit" class="action-btn" style="width: 100%; padding: 12px;"><i class="fas fa-unlock-alt"></i> Panele Giriş Yap</button>
-        </form>
+<div id="adminPanel">
+    <div class="admin-header">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span style="width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></span>
+            <h3 style="font-size: 16px;">Croxin Destek - Yetkili Paneli</h3>
+        </div>
+        <button onclick="loadAllTickets()" style="background:none; border:1px solid var(--card-border); color:#fff; padding:6px 12px; border-radius:6px; cursor:pointer;"><i class="fas fa-sync"></i> Yenile</button>
     </div>
 
-    <!-- Asıl Yetkili Paneli -->
-    <div id="adminPanel" style="width: 100%; max-width: 1000px; background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--card-border); border-radius: 24px; padding: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); display: none; flex-direction: column;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 15px; margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 12px;">
-                <div style="width: 12px; height: 12px; background: #2ed573; border-radius: 50%; box-shadow: 0 0 10px #2ed573;"></div>
-                <h2 style="font-size: 18px; margin: 0; font-weight: 700; color: #ffffff;">Croxin Destek - Yetkili Paneli</h2>
-            </div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <!-- Ziyaretçi Sayısı Göstergesi -->
-                <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 13px;">
-                    <i class="fas fa-users" style="color: var(--primary-color);"></i>
-                    <span>Ziyaretçi: <strong id="visitorCountDisplay" style="color: var(--primary-color);">Yükleniyor...</strong></span>
-                </div>
-                <button type="button" class="action-btn" onclick="loadAdminData()"><i class="fas fa-sync-alt"></i></button>
-                <button type="button" class="action-btn danger-btn" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
-            </div>
+    <div class="admin-body">
+        <div class="ticket-list-panel" id="adminTicketList">
+            <div style="text-align: center; opacity: 0.5; margin-top: 20px; font-size: 13px;">Biletler yükleniyor...</div>
         </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
-            <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 16px; padding: 12px; height: 450px; overflow-y: auto;" id="adminTicketList">
-                <p style="text-align: center; color: rgba(255,255,255,0.6); font-size: 13px; margin-top: 40px;"><i class="fas fa-spinner fa-spin"></i> Biletler yükleniyor...</p>
+        <div class="chat-pane" id="adminChatPane">
+            <div id="noTicketSelected" style="flex-grow:1; display:flex; align-items:center; justify-content:center; opacity:0.5; font-size:14px;">
+                Sol taraftan bir bilet seçin.
             </div>
-
-            <div style="background: rgba(0,0,0,0.5); border: 1px solid var(--card-border); border-radius: 16px; padding: 15px; display: flex; flex-direction: column; height: 450px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 10px; margin-bottom: 10px;">
-                    <div id="adminActiveTicketHeader" style="font-size: 12px; font-weight: 600; color: #ffffff; display: flex; align-items: center; gap: 6px;">
-                        <i class="fas fa-info-circle" style="color: var(--primary-color);"></i> Bir bilet seçin
-                    </div>
-                    <div id="adminTicketActions" style="display: none; gap: 6px;">
-                        <button type="button" class="action-btn warning-btn" style="padding: 6px 10px; font-size: 11px;" onclick="closeActiveTicket()"><i class="fas fa-lock"></i> Kapat</button>
-                        <button type="button" class="action-btn danger-btn" style="padding: 6px 10px; font-size: 11px;" onclick="deleteActiveTicket()"><i class="fas fa-trash"></i> Sil</button>
-                    </div>
-                </div>
-
-                <div id="adminChatMessages" style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; padding-right: 5px;">
-                    <p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; margin: auto;">Görüntülenecek mesaj yok</p>
-                </div>
-
-                <div style="display: flex; gap: 8px; align-items: center;" id="adminReplyBoxContainer">
-                    <label style="cursor: pointer; color: var(--primary-color); font-size: 18px; padding: 0 4px;" title="Fotoğraf Yükle">
-                        <i class="fas fa-image"></i>
-                        <input type="file" id="adminImageInput" accept="image/*" style="display: none;" onchange="previewAdminImage()">
-                    </label>
-                    <input type="text" id="adminReplyInput" placeholder="Yetkili olarak yanıt yaz..." style="flex-grow: 1; padding: 10px 14px; background: rgba(0,0,0,0.6); border: 1px solid var(--card-border); border-radius: 10px; color: #ffffff; outline: none; font-size: 13px;" onkeypress="if(event.key === 'Enter') sendAdminReply()">
-                    <button type="button" class="action-btn" onclick="sendAdminReply()" style="padding: 10px 16px;"><i class="fas fa-paper-plane"></i></button>
-                </div>
-                <div id="adminImagePreviewContainer" style="display: none; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--primary-color);">
-                    <span>Seçilen Görsel: <strong id="adminImageName"></strong></span>
-                    <i class="fas fa-times" style="cursor:pointer; color:#ff4757;" onclick="clearAdminImage()"></i>
+            <div id="activeChatContainer" style="display:none; flex-grow:1; flex-direction:column; height:100%;">
+                <div id="adminChatMessages" style="flex-grow:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-bottom:10px;"></div>
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="text" id="adminReplyInput" placeholder="Yetkili olarak yanıt yaz..." style="flex-grow:1; padding:10px; background:rgba(0,0,0,0.4); border:1px solid var(--card-border); border-radius:8px; color:#fff; outline:none; font-size:13px;" onkeypress="if(event.key === 'Enter') sendAdminReply()">
+                    <button onclick="sendAdminReply()" style="padding:0 15px; background:var(--primary-color); border:none; border-radius:8px; color:#000; font-weight:700; cursor:pointer; height:38px;"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-    const adminWorkerUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
-    const CORRECT_ADMIN_PASS = "croxin2026";
-    let selectedAdminTicketId = null;
-    let adminPollInterval = null;
-    let adminBase64Image = null;
+<script>
+const workerUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
+let selectedTicketId = null;
+let adminPollInterval = null;
 
-    window.addEventListener('DOMContentLoaded', () => {
-        const trustedDeviceToken = localStorage.getItem('croxin_trusted_device');
-        if (trustedDeviceToken === 'verified_active') {
-            showAdminPanel();
-        } else {
-            document.getElementById('authScreen').style.display = 'block';
+async function loadAllTickets() {
+    try {
+        const res = await fetch(`${workerUrl}?action=get_all_tickets`);
+        const tickets = await res.json();
+        const listContainer = document.getElementById('adminTicketList');
+        listContainer.innerHTML = "";
+
+        if (!tickets || Object.keys(tickets).length === 0) {
+            listContainer.innerHTML = `<div style="text-align: center; opacity: 0.5; margin-top: 20px; font-size: 13px;">Henüz açılmış bilet yok.</div>`;
+            return;
         }
+
+        Object.keys(tickets).forEach(tId => {
+            const ticket = tickets[tId];
+            const div = document.createElement('div');
+            div.className = `ticket-card ${selectedTicketId === tId ? 'active' : ''}`;
+            div.onclick = () => selectAdminTicket(tId);
+            div.innerHTML = `
+                <h4>${ticket.name || 'Ziyaretçi'} (${tId})</h4>
+                <p>Kategori: ${ticket.category || 'Destek'}</p>
+                <p style="font-size:10px; opacity:0.5; margin-top:2px;">Durum: ${ticket.status || 'open'}</p>
+            `;
+            listContainer.appendChild(div);
+        });
+    } catch (e) {
+        console.error("Biletler yüklenemedi", e);
+    }
+}
+
+async function selectAdminTicket(tId) {
+    selectedTicketId = tId;
+    document.getElementById('noTicketSelected').style.display = 'none';
+    document.getElementById('activeChatContainer').style.display = 'flex';
+    loadAdminMessages();
+    loadAllTickets();
+    if (adminPollInterval) clearInterval(adminPollInterval);
+    adminPollInterval = setInterval(loadAdminMessages, 3000);
+}
+
+async function loadAdminMessages() {
+    if (!selectedTicketId) return;
+    try {
+        const res = await fetch(`${workerUrl}?action=get_ticket&ticketId=${selectedTicketId}`);
+        const data = await res.json();
         
-        // Ziyaretçi sayısını artırmak için siteye girildiğinde tetikle
-        trackVisitor();
-    });
-
-    async function trackVisitor() {
-        try {
-            await fetch(adminWorkerUrl, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: "track_visitor" })
-            });
-        } catch (e) {}
-    }
-
-    function handleAdminLogin(e) {
-        e.preventDefault();
-        const pass = document.getElementById('adminPasswordInput').value;
-        if (pass === CORRECT_ADMIN_PASS) {
-            localStorage.setItem('croxin_trusted_device', 'verified_active');
-            document.getElementById('authScreen').style.display = 'none';
-            showAdminPanel();
-        } else {
-            alert("Hatalı yetkili şifresi!");
-            document.getElementById('adminPasswordInput').value = "";
-        }
-    }
-
-    function logoutAdmin() {
-        localStorage.removeItem('croxin_trusted_device');
-        location.reload();
-    }
-
-    function showAdminPanel() {
-        document.getElementById('adminPanel').style.display = 'flex';
-        loadAdminData();
-        setInterval(loadAdminData, 5000);
-    }
-
-    function loadAdminData() {
-        loadAllTickets();
-        loadVisitorCount();
-    }
-
-    async function loadVisitorCount() {
-        try {
-            const res = await fetch(`${adminWorkerUrl}?action=get_visitors`);
-            const data = await res.json();
-            if (data && typeof data.count !== 'undefined') {
-                document.getElementById('visitorCountDisplay').innerText = data.count;
-            }
-        } catch (e) {
-            document.getElementById('visitorCountDisplay').innerText = "Hata";
-        }
-    }
-
-    async function loadAllTickets() {
-        try {
-            const res = await fetch(`${adminWorkerUrl}?action=get_all_tickets`);
-            const data = await res.json();
-            const listDiv = document.getElementById('adminTicketList');
-            listDiv.innerHTML = "";
-
-            if (!data || Object.keys(data).length === 0) {
-                listDiv.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 40px;">Henüz açılmış bilet yok.</p>';
-                return;
-            }
-
-            const ticketIds = Object.keys(data).reverse();
-
-            ticketIds.forEach(ticketId => {
-                const ticket = data[ticketId];
-                const item = document.createElement('div');
-                const isSelected = selectedAdminTicketId === ticketId;
-                const isClosed = ticket.status === 'closed';
-                item.className = `ticket-item ${isSelected ? 'active' : ''}`;
-                item.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                        <strong style="font-size:13px;">#${ticketId} ${isClosed ? '(Kapalı)' : ''}</strong>
-                        <span style="font-size:10px; color:${isSelected ? '#000' : 'rgba(255,255,255,0.7)'}; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${ticket.category}</span>
-                    </div>
-                    <div style="font-size:12px; color:${isSelected ? '#000' : 'rgba(255,255,255,0.85)'};">${ticket.name}</div>
-                `;
-                item.onclick = () => selectAdminTicket(ticketId);
-                listDiv.appendChild(item);
-            });
-        } catch (e) {
-            console.error("Biletler yüklenemedi", e);
-        }
-    }
-
-    async function selectAdminTicket(ticketId) {
-        selectedAdminTicketId = ticketId;
-        document.getElementById('adminTicketActions').style.display = 'flex';
-        loadAdminMessages();
-        if (adminPollInterval) clearInterval(adminPollInterval);
-        adminPollInterval = setInterval(loadAdminMessages, 3000);
-        loadAllTickets();
-    }
-
-    async function loadAdminMessages() {
-        if (!selectedAdminTicketId) return;
-        try {
-            const res = await fetch(`${adminWorkerUrl}?action=get_ticket&ticketId=${selectedAdminTicketId}`);
-            const data = await res.json();
-            
-            if (data && data.messages) {
-                document.getElementById('adminActiveTicketHeader').innerHTML = `<i class="fas fa-info-circle" style="color: var(--primary-color);"></i> #${selectedAdminTicketId} | <strong style="color:var(--primary-color);">${data.name}</strong>`;
+        if (data && data.messages) {
+            const box = document.getElementById('adminChatMessages');
+            box.innerHTML = "";
+            data.messages.forEach(msg => {
+                const msgDiv = document.createElement('div');
+                const timeText = msg.time ? `<span style="font-size:9px; opacity:0.7; float:right; margin-left:8px; margin-top:2px;">${msg.time}</span>` : '';
                 
-                if(data.status === 'closed') {
-                    document.getElementById('adminReplyBoxContainer').style.display = 'none';
+                if (msg.type === 'system') {
+                    msgDiv.style.cssText = "text-align:center; font-size:11px; opacity:0.6; margin:4px 0;";
+                    msgDiv.innerHTML = `${msg.text} ${timeText}`;
+                } else if (msg.type === 'user') {
+                    msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.1); color:#fff; padding:8px 12px; border-radius:10px 10px 10px 0; max-width:85%; font-size:13px;";
+                    let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:6px; margin-top:6px; display:block;" />` : '';
+                    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}${imgHtml}${timeText}`;
                 } else {
-                    document.getElementById('adminReplyBoxContainer').style.display = 'flex';
+                    msgDiv.style.cssText = "align-self:flex-end; background:var(--primary-color); color:#000; padding:8px 12px; border-radius:10px 10px 0 10px; max-width:85%; font-size:13px;";
+                    let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:6px; margin-top:6px; display:block;" />` : '';
+                    msgDiv.innerHTML = `<strong>Yetkili:</strong> ${msg.text}${imgHtml}${timeText}`;
                 }
-
-                const chatBox = document.getElementById('adminChatMessages');
-                chatBox.innerHTML = "";
-                
-                data.messages.forEach(msg => {
-                    const msgDiv = document.createElement('div');
-                    const timeText = msg.time ? `<span style="font-size:9px; opacity:0.7; float:right; margin-left:8px; margin-top:2px;">${msg.time}</span>` : '';
-                    
-                    if (msg.type === 'system') {
-                        msgDiv.style.cssText = "text-align:center; font-size:11px; color:rgba(255,255,255,0.6); margin:6px 0; background:rgba(255,255,255,0.05); padding:6px; border-radius:6px;";
-                        msgDiv.innerHTML = `${msg.text} ${timeText}`;
-                    } else if (msg.type === 'user') {
-                        msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.12); color:#ffffff; padding:10px 14px; border-radius:12px 12px 12px 2px; max-width:85%; font-size:13px; word-break:break-word; border: 1px solid var(--card-border);";
-                        let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:8px; margin-top:6px; display:block;" />` : '';
-                        msgDiv.innerHTML = `<span style="font-size:10px; color:var(--primary-color); font-weight:600; display:block; margin-bottom:2px;">${msg.sender}</span>${msg.text}${imgHtml}${timeText}`;
-                    } else {
-                        msgDiv.style.cssText = "align-self:flex-end; background:linear-gradient(135deg, var(--primary-color), #0077ff); color:#000000; padding:10px 14px; border-radius:12px 12px 2px 12px; max-width:85%; font-size:13px; word-break:break-word; font-weight: 600; box-shadow: 0 4px 12px rgba(0,255,204,0.2);";
-                        let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:8px; margin-top:6px; display:block;" />` : '';
-                        msgDiv.innerHTML = `<span style="font-size:10px; color:rgba(0,0,0,0.7); font-weight:700; display:block; margin-bottom:2px;">${msg.sender}</span>${msg.text}${imgHtml}${timeText}`;
-                    }
-                    chatBox.appendChild(msgDiv);
-                });
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }
-        } catch (e) {}
-    }
-
-    function previewAdminImage() {
-        const file = document.getElementById('adminImageInput').files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                adminBase64Image = e.target.result;
-                document.getElementById('adminImageName').innerText = file.name;
-                document.getElementById('adminImagePreviewContainer').style.display = 'flex';
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function clearAdminImage() {
-        adminBase64Image = null;
-        document.getElementById('adminImageInput').value = "";
-        document.getElementById('adminImagePreviewContainer').style.display = 'none';
-    }
-
-    async function sendAdminReply() {
-        const input = document.getElementById('adminReplyInput');
-        const text = input.value.trim();
-        if ((!text && !adminBase64Image) || !selectedAdminTicketId) return;
-
-        const currentImg = adminBase64Image;
-        input.value = "";
-        clearAdminImage();
-
-        try {
-            await fetch(adminWorkerUrl, {
-                method: "POST",
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    action: "send_message",
-                    ticketId: selectedAdminTicketId,
-                    sender: "Yusuf (Yetkili)",
-                    text: text || "Görsel gönderildi.",
-                    type: "admin",
-                    image: currentImg
-                })
+                box.appendChild(msgDiv);
             });
-            loadAdminMessages();
-        } catch (err) {
-            console.error("Yetkili mesajı gönderilemedi", err);
+            box.scrollTop = box.scrollHeight;
         }
-    }
+    } catch (e) {}
+}
 
-    async function closeActiveTicket() {
-        if (!selectedAdminTicketId || !confirm("Bu bileti kapatmak istediğinize emin misiniz?")) return;
-        await fetch(adminWorkerUrl, {
+async function sendAdminReply() {
+    const input = document.getElementById('adminReplyInput');
+    const text = input.value.trim();
+    if (!text || !selectedTicketId) return;
+
+    input.value = "";
+    try {
+        await fetch(workerUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: "close_ticket", ticketId: selectedAdminTicketId })
+            body: JSON.stringify({ action: "send_message", ticketId: selectedTicketId, sender: "Yetkili", text: text, type: "admin" })
         });
         loadAdminMessages();
-        loadAllTickets();
+    } catch (e) {
+        console.error("Yanıt gönderilemedi", e);
     }
+}
 
-    async function deleteActiveTicket() {
-        if (!selectedAdminTicketId || !confirm("Bu bileti tamamen silmek istediğinize emin misiniz?")) return;
-        await fetch(adminWorkerUrl, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: "delete_thread", ticketId: selectedAdminTicketId }) // Dilersen delete_ticket
-        });
-        document.getElementById('adminChatMessages').innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; margin: auto;">Görüntülenecek mesaj yok</p>';
-        document.getElementById('adminActiveTicketHeader').innerHTML = '<i class="fas fa-info-circle" style="color: var(--primary-color);"></i> Bir bilet seçin';
-        document.getElementById('adminTicketActions').style.display = 'none';
-        selectedAdminTicketId = null;
-        if(adminPollInterval) clearInterval(adminPollInterval);
-        loadAllTickets();
-    }
-    </script>
+window.addEventListener('DOMContentLoaded', () => {
+    loadAllTickets();
+    setInterval(loadAllTickets, 5000);
+});
+</script>
+
 </body>
 </html>
