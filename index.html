@@ -987,7 +987,7 @@ box-shadow: 0 0 8px var(--primary-color);
 <!-- GİRİŞ EKRANI (WELCOME SCREEN) -->
 <div class="welcome-screen" id="welcomeScreen">
     <div class="welcome-content">
-        <img class="welcome-avatar" src="https://github.com/realyusufi.png?v=2" alt="Portfolio">
+        <img class="welcome-avatar" src="https://github.com/croxincroxin.png?v=2" alt="Croxin">
         <div class="welcome-title">WELCOME TO CROXIN</div>
         <div class="welcome-sub">Developer • Designer • Community Manager</div>
         <button class="enter-btn" id="enterBtn">
@@ -1019,7 +1019,7 @@ box-shadow: 0 0 8px var(--primary-color);
 
 <header>
 
-<img class="profile" src="https://github.com/realyusufi.png?v=2" alt="Croxin Logo">
+<img class="profile" src="https://github.com/croxincroxin.png?v=2" alt="Croxin Logo">
 
 <div class="logo">CROXIN</div>
 
@@ -1027,43 +1027,9 @@ box-shadow: 0 0 8px var(--primary-color);
 
 <!-- DISCORD CANLI DURUM CARD'I -->
 <div class="discord-status-card">
-    <div class="status-indicator" id="discordDot"></div>
-    <div class="discord-text" id="discordText">Discord: <strong>realyusufi</strong> (Bağlanıyor...)</div>
+    <div class="status-indicator"></div>
+    <div class="discord-text">Discord: <strong>Croxin#0001</strong> (Aktif / Visual Studio Code)</div>
 </div>
-    <script>
-    async function updateDiscordStatus() {
-    try {
-        const response = await fetch('https://api.lanyard.rest/v1/users/1403418770009227387');
-        const data = await response.json();
-        
-        if (data.success) {
-            const user = data.data;
-            const dot = document.getElementById('discordDot');
-            const text = document.getElementById('discordText');
-            
-            let color = '#747f8d';
-            if (user.discord_status === 'online') color = '#43b581';
-            if (user.discord_status === 'idle') color = '#faa61a';
-            if (user.discord_status === 'dnd') color = '#f04747';
-            
-            dot.style.background = color;
-            dot.style.boxShadow = `0 0 10px ${color}`;
-            
-            let activityName = 'Aktif';
-            if (user.activities && user.activities.length > 0) {
-                activityName = user.activities[0].name;
-            }
-            
-            text.innerHTML = `Discord: <strong>${user.discord_user.username}</strong> (${activityName})`;
-        }
-    } catch (err) {
-        console.log("Discord durumu alınamadı");
-    }
-}
-
-updateDiscordStatus();
-setInterval(updateDiscordStatus, 5000);
-</script>
 
 <!-- GÖRÜNTÜLENME SAYACI -->
 <div class="views-counter">
@@ -1210,7 +1176,7 @@ setInterval(updateDiscordStatus, 5000);
 
 <!-- MÜZİK ÇALAR -->
 <div class="music-player">
-    <img class="cover-art" src="https://github.com/realyusufi.png?v=2" alt="Album Cover">
+    <img class="cover-art" src="https://github.com/croxincroxin.png?v=2" alt="Album Cover">
     <div class="player-info">
         <div class="song-title" id="songTitle">Croxin - Synthwave Vibe</div>
         <div class="progress-container">
@@ -1413,7 +1379,7 @@ document.querySelectorAll('.faq-question').forEach(q => {
     });
 });
 
-// 9. İLETİŞİM FORMU (Cloudflare Worker Köprüsü Entegrasyonlu)
+// 9. İLETİŞİM FORMU (Doğrudan Discord Webhook Entegrasyonu + Proxy Yedekli)
 async function handleContact(e) {
     e.preventDefault();
     
@@ -1448,31 +1414,41 @@ async function handleContact(e) {
         }]
     };
 
-    // Oluşturduğumuz Cloudflare Worker Köprü Linkimiz
-    const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
+    const discordWebhookUrl = "https://discord.com/api/webhooks/1529948852797440220/AsmvI5U0CsnKSF1LhV_OyYb3pM7f1IkPFc48CSjJgbDtV0IBAcjhiX_9MqvIlupl4g0I";
 
     try {
-        const response = await fetch(workerBridgeUrl, {
+        const response = await fetch(discordWebhookUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordPayload)
         });
 
-        const sonucVerisi = await response.json();
-
-        if (response.ok && sonucVerisi.success) {
+        if (response.ok || response.type === 'opaque') {
             alert("Mesajın başarıyla Discord kanalına iletildi!");
             e.target.reset();
             localStorage.setItem('croxin_last_msg_time', Date.now());
             startCooldownTimer(120);
         } else {
-            throw new Error(sonucVerisi.error || "Bilinmeyen hata");
+            throw new Error("Discord yanıt vermedi.");
         }
     } catch (err) {
         console.error(err);
-        alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
+        try {
+            await fetch(`https://corsproxy.io/?` + encodeURIComponent(discordWebhookUrl), {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordPayload)
+            });
+            
+            alert("Mesajın başarıyla Discord kanalına iletildi!");
+            e.target.reset();
+            localStorage.setItem('croxin_last_msg_time', Date.now());
+            startCooldownTimer(120);
+        } catch (proxyErr) {
+            alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
+        }
     }
 }
 
@@ -1590,169 +1566,5 @@ progressBar.addEventListener('click', (e) => {
 });
 </script>
 
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Croxin Destek - Yetkili Paneli</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --bg-dark: #0f111a;
-            --card-bg: #181b28;
-            --card-border: rgba(255, 255, 255, 0.08);
-            --primary-color: #2ed573;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: var(--bg-dark); color: #fff; padding: 20px; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        
-        #adminPanel { width: 100%; max-width: 1100px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 25px; box-shadow: 0 10px 50px rgba(0,0,0,0.8); display: flex; flex-direction: column; gap: 20px; }
-        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border); padding-bottom: 15px; }
-        
-        .admin-body { display: grid; grid-template-columns: 320px 1fr; gap: 20px; height: 500px; }
-        .ticket-list-panel { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .ticket-card { padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .ticket-card:hover, .ticket-card.active { background: rgba(46, 213, 115, 0.1); border-color: var(--primary-color); }
-        .ticket-card h4 { font-size: 14px; margin-bottom: 4px; color: #fff; }
-        .ticket-card p { font-size: 12px; opacity: 0.7; }
-
-        .chat-pane { background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; padding: 15px; }
-        .chat-messages-box { flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; padding-right: 5px; }
-    </style>
-</head>
-<body>
-
-<div id="adminPanel">
-    <div class="admin-header">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <span style="width: 12px; height: 12px; background: var(--primary-color); border-radius: 50%;"></span>
-            <h3 style="font-size: 16px;">Croxin Destek - Yetkili Paneli</h3>
-        </div>
-        <button onclick="loadAllTickets()" style="background:none; border:1px solid var(--card-border); color:#fff; padding:6px 12px; border-radius:6px; cursor:pointer;"><i class="fas fa-sync"></i> Yenile</button>
-    </div>
-
-    <div class="admin-body">
-        <div class="ticket-list-panel" id="adminTicketList">
-            <div style="text-align: center; opacity: 0.5; margin-top: 20px; font-size: 13px;">Biletler yükleniyor...</div>
-        </div>
-        <div class="chat-pane" id="adminChatPane">
-            <div id="noTicketSelected" style="flex-grow:1; display:flex; align-items:center; justify-content:center; opacity:0.5; font-size:14px;">
-                Sol taraftan bir bilet seçin.
-            </div>
-            <div id="activeChatContainer" style="display:none; flex-grow:1; flex-direction:column; height:100%;">
-                <div id="adminChatMessages" style="flex-grow:1; overflow-y:auto; display:flex; flex-direction:column; gap:8px; margin-bottom:10px;"></div>
-                <div style="display:flex; gap:8px; align-items:center;">
-                    <input type="text" id="adminReplyInput" placeholder="Yetkili olarak yanıt yaz..." style="flex-grow:1; padding:10px; background:rgba(0,0,0,0.4); border:1px solid var(--card-border); border-radius:8px; color:#fff; outline:none; font-size:13px;" onkeypress="if(event.key === 'Enter') sendAdminReply()">
-                    <button onclick="sendAdminReply()" style="padding:0 15px; background:var(--primary-color); border:none; border-radius:8px; color:#000; font-weight:700; cursor:pointer; height:38px;"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-const workerUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
-let selectedTicketId = null;
-let adminPollInterval = null;
-
-async function loadAllTickets() {
-    try {
-        const res = await fetch(`${workerUrl}?action=get_all_tickets`);
-        const tickets = await res.json();
-        const listContainer = document.getElementById('adminTicketList');
-        listContainer.innerHTML = "";
-
-        if (!tickets || Object.keys(tickets).length === 0) {
-            listContainer.innerHTML = `<div style="text-align: center; opacity: 0.5; margin-top: 20px; font-size: 13px;">Henüz açılmış bilet yok.</div>`;
-            return;
-        }
-
-        Object.keys(tickets).forEach(tId => {
-            const ticket = tickets[tId];
-            const div = document.createElement('div');
-            div.className = `ticket-card ${selectedTicketId === tId ? 'active' : ''}`;
-            div.onclick = () => selectAdminTicket(tId);
-            div.innerHTML = `
-                <h4>${ticket.name || 'Ziyaretçi'} (${tId})</h4>
-                <p>Kategori: ${ticket.category || 'Destek'}</p>
-                <p style="font-size:10px; opacity:0.5; margin-top:2px;">Durum: ${ticket.status || 'open'}</p>
-            `;
-            listContainer.appendChild(div);
-        });
-    } catch (e) {
-        console.error("Biletler yüklenemedi", e);
-    }
-}
-
-async function selectAdminTicket(tId) {
-    selectedTicketId = tId;
-    document.getElementById('noTicketSelected').style.display = 'none';
-    document.getElementById('activeChatContainer').style.display = 'flex';
-    loadAdminMessages();
-    loadAllTickets();
-    if (adminPollInterval) clearInterval(adminPollInterval);
-    adminPollInterval = setInterval(loadAdminMessages, 3000);
-}
-
-async function loadAdminMessages() {
-    if (!selectedTicketId) return;
-    try {
-        const res = await fetch(`${workerUrl}?action=get_ticket&ticketId=${selectedTicketId}`);
-        const data = await res.json();
-        
-        if (data && data.messages) {
-            const box = document.getElementById('adminChatMessages');
-            box.innerHTML = "";
-            data.messages.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                const timeText = msg.time ? `<span style="font-size:9px; opacity:0.7; float:right; margin-left:8px; margin-top:2px;">${msg.time}</span>` : '';
-                
-                if (msg.type === 'system') {
-                    msgDiv.style.cssText = "text-align:center; font-size:11px; opacity:0.6; margin:4px 0;";
-                    msgDiv.innerHTML = `${msg.text} ${timeText}`;
-                } else if (msg.type === 'user') {
-                    msgDiv.style.cssText = "align-self:flex-start; background:rgba(255,255,255,0.1); color:#fff; padding:8px 12px; border-radius:10px 10px 10px 0; max-width:85%; font-size:13px;";
-                    let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:6px; margin-top:6px; display:block;" />` : '';
-                    msgDiv.innerHTML = `<strong>${msg.sender}:</strong> ${msg.text}${imgHtml}${timeText}`;
-                } else {
-                    msgDiv.style.cssText = "align-self:flex-end; background:var(--primary-color); color:#000; padding:8px 12px; border-radius:10px 10px 0 10px; max-width:85%; font-size:13px;";
-                    let imgHtml = msg.image ? `<img src="${msg.image}" style="max-width:100%; border-radius:6px; margin-top:6px; display:block;" />` : '';
-                    msgDiv.innerHTML = `<strong>Yetkili:</strong> ${msg.text}${imgHtml}${timeText}`;
-                }
-                box.appendChild(msgDiv);
-            });
-            box.scrollTop = box.scrollHeight;
-        }
-    } catch (e) {}
-}
-
-async function sendAdminReply() {
-    const input = document.getElementById('adminReplyInput');
-    const text = input.value.trim();
-    if (!text || !selectedTicketId) return;
-
-    input.value = "";
-    try {
-        await fetch(workerUrl, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: "send_message", ticketId: selectedTicketId, sender: "Yetkili", text: text, type: "admin" })
-        });
-        loadAdminMessages();
-    } catch (e) {
-        console.error("Yanıt gönderilemedi", e);
-    }
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-    loadAllTickets();
-    setInterval(loadAllTickets, 5000);
-});
-</script>
-
-</body>
-</html>
-    
 </body>
 </html>
