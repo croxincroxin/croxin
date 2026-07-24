@@ -1390,9 +1390,9 @@ setInterval(updateDiscordStatus, 5000);
         </div>
     </div>
     <div class="controls">
-        <button class="control-btn" onclick="restartSong()"><i class="fas fa-step-backward"></i></button>
+        <button class="control-btn" onclick="prevSong()"><i class="fas fa-step-backward"></i></button>
         <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()"><i class="fas fa-play" id="playIcon"></i></button>
-        <button class="control-btn"><i class="fas fa-step-forward"></i></button>
+        <button class="control-btn" onclick="nextSong()"><i class="fas fa-step-forward"></i></button>
     </div>
     
     <div class="volume-container">
@@ -1401,7 +1401,7 @@ setInterval(updateDiscordStatus, 5000);
     </div>
 </div>
 
-<audio id="audioPlayer" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+<audio id="audioPlayer"></audio>
 
 <!-- PROJE MODAL PENCERESİ -->
 <div class="modal-overlay" id="projectModal">
