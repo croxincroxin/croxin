@@ -82,8 +82,13 @@
                 <div style="width: 12px; height: 12px; background: #2ed573; border-radius: 50%; box-shadow: 0 0 10px #2ed573;"></div>
                 <h2 style="font-size: 18px; margin: 0; font-weight: 700; color: #ffffff;">Croxin Destek - Yetkili Paneli</h2>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button type="button" class="action-btn" onclick="loadAllTickets()"><i class="fas fa-sync-alt"></i> Listeyi Yenile</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <!-- Ziyaretçi Sayısı Göstergesi -->
+                <div style="background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); padding: 8px 14px; border-radius: 10px; display: flex; align-items: center; gap: 8px; font-size: 13px;">
+                    <i class="fas fa-users" style="color: var(--primary-color);"></i>
+                    <span>Ziyaretçi: <strong id="visitorCountDisplay" style="color: var(--primary-color);">Yükleniyor...</strong></span>
+                </div>
+                <button type="button" class="action-btn" onclick="loadAdminData()"><i class="fas fa-sync-alt"></i></button>
                 <button type="button" class="action-btn danger-btn" onclick="logoutAdmin()"><i class="fas fa-sign-out-alt"></i> Çıkış</button>
             </div>
         </div>
@@ -126,12 +131,11 @@
 
     <script>
     const adminWorkerUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
-    const CORRECT_ADMIN_PASS = "croxin2026"; // Buradan şifreni değiştirebilirsin
+    const CORRECT_ADMIN_PASS = "croxin2026";
     let selectedAdminTicketId = null;
     let adminPollInterval = null;
     let adminBase64Image = null;
 
-    // Cihaz ve Şifre Kontrolü
     window.addEventListener('DOMContentLoaded', () => {
         const trustedDeviceToken = localStorage.getItem('croxin_trusted_device');
         if (trustedDeviceToken === 'verified_active') {
@@ -139,7 +143,20 @@
         } else {
             document.getElementById('authScreen').style.display = 'block';
         }
+        
+        // Ziyaretçi sayısını artırmak için siteye girildiğinde tetikle
+        trackVisitor();
     });
+
+    async function trackVisitor() {
+        try {
+            await fetch(adminWorkerUrl, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: "track_visitor" })
+            });
+        } catch (e) {}
+    }
 
     function handleAdminLogin(e) {
         e.preventDefault();
@@ -161,8 +178,25 @@
 
     function showAdminPanel() {
         document.getElementById('adminPanel').style.display = 'flex';
+        loadAdminData();
+        setInterval(loadAdminData, 5000);
+    }
+
+    function loadAdminData() {
         loadAllTickets();
-        setInterval(loadAllTickets, 5000);
+        loadVisitorCount();
+    }
+
+    async function loadVisitorCount() {
+        try {
+            const res = await fetch(`${adminWorkerUrl}?action=get_visitors`);
+            const data = await res.json();
+            if (data && typeof data.count !== 'undefined') {
+                document.getElementById('visitorCountDisplay').innerText = data.count;
+            }
+        } catch (e) {
+            document.getElementById('visitorCountDisplay').innerText = "Hata";
+        }
     }
 
     async function loadAllTickets() {
@@ -313,7 +347,7 @@
         await fetch(adminWorkerUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: "delete_ticket", ticketId: selectedAdminTicketId })
+            body: JSON.stringify({ action: "delete_thread", ticketId: selectedAdminTicketId }) // Dilersen delete_ticket
         });
         document.getElementById('adminChatMessages').innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.5); font-size: 13px; margin: auto;">Görüntülenecek mesaj yok</p>';
         document.getElementById('adminActiveTicketHeader').innerHTML = '<i class="fas fa-info-circle" style="color: var(--primary-color);"></i> Bir bilet seçin';
