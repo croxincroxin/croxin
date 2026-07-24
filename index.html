@@ -1265,29 +1265,29 @@ setInterval(updateDiscordStatus, 5000);
     </div>
 </div>
 
-<section id="about">
-<h2 class="title">🚀 About Croxin</h2>
+<section id="hakkinda">
+<h2 class="title"> 🚀 Croxin Hakkında</h2>
 
-<div class="cards">
-<div class="card tilt-card">
-<h3>🎮 Roblox Development</h3>
+<div class="kartlar">
+<div class="kart tilt-kart">
+<h3> 🎮 Roblox Geliştirme</h3>
 <p>Roblox Studio ortamında gelişmiş Lua skriptleri, UI tasarımları ve özel oyun mekanikleri geliştiriyorum.</p>
 </div>
 
-<div class="card tilt-card">
-<h3>💻 Web Design</h3>
+<div class="kart tilt-kart">
+<h3> 💻 Web Tasarımı</h3>
 <p>Modern, hızlı, SEO uyumlu ve göz alıcı animasyonlara sahip portfolyo ve topluluk siteleri tasarlıyorum.</p>
 </div>
 
-<div class="card tilt-card">
-<h3>🌐 Community Management</h3>
+<div class="kart tilt-kart">
+<h3> 🌐 Topluluk Yönetimi</h3>
 <p>Büyük ölçekli Discord sunucularının altyapısını kuruyor, yönetim ekibini eğitiyor ve güvenlik botlarını entegre ediyorum.</p>
 </div>
 </div>
 </section>
 
-<section id="projects">
-<h2 class="title">⭐ Projects</h2>
+<section id="projeler">
+<h2 class="title"> ⭐ Projeler</h2>
 
 <!-- PROJE FİLTRELEME -->
 <div class="project-filters">
@@ -1390,9 +1390,9 @@ setInterval(updateDiscordStatus, 5000);
         </div>
     </div>
     <div class="controls">
-        <button class="control-btn" onclick="prevSong()"><i class="fas fa-step-backward"></i></button>
+        <button class="control-btn" onclick="restartSong()"><i class="fas fa-step-backward"></i></button>
         <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()"><i class="fas fa-play" id="playIcon"></i></button>
-        <button class="control-btn" onclick="nextSong()"><i class="fas fa-step-forward"></i></button>
+        <button class="control-btn"><i class="fas fa-step-forward"></i></button>
     </div>
     
     <div class="volume-container">
@@ -1401,7 +1401,7 @@ setInterval(updateDiscordStatus, 5000);
     </div>
 </div>
 
-<audio id="audioPlayer"></audio>
+<audio id="audioPlayer" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
 
 <!-- PROJE MODAL PENCERESİ -->
 <div class="modal-overlay" id="projectModal">
@@ -1417,76 +1417,112 @@ setInterval(updateDiscordStatus, 5000);
 © 2026 Croxin • All Rights Reserved
 </footer>
 
+<!-- CANLI DESTEK WIDGET -->
+<div id="aiChatWidget" class="ai-chat-widget">
+    <!-- Açma/Kapatma Butonu -->
+    <button id="aiChatToggle" class="ai-chat-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+
+    <!-- Sohbet Paneli -->
+    <div id="aiChatContainer" class="ai-chat-container hidden">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title">
+                <span class="ai-status-dot" style="background-color: #2ecc71;"></span>
+                <span>Croxin Canlı Destek</span>
+            </div>
+            <button id="aiChatClose" class="ai-chat-close">&times;</button>
+        </div>
+        
+        <div id="aiChatMessages" class="ai-chat-messages">
+            <div class="ai-message bot">
+                Merhaba! 👋 Şu an çevrimdışıyız veya müsait değiliz ancak mesajını bırakırsan en kısa sürede Discord üzerinden sana dönüş yapacağız. Adını ve mesajını yazabilir misin?
+            </div>
+        </div>
+
+        <div class="ai-chat-input-area">
+            <input type="text" id="aiChatInput" placeholder="Mesajınızı yazın..." autocomplete="off">
+            <button id="aiChatSend">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
-// 1. ÖZEL NENON MOUSE İMLECİ (CUSTOM CURSOR)
+// 1. ÖZEL NEON MOUSE İMLECİ (CUSTOM CURSOR)
 const cursor = document.getElementById('cursor');
 const follower = document.getElementById('follower');
 
-document.addEventListener('mousemove', (e) => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-    
-    setTimeout(() => {
-        follower.style.left = e.clientX + 'px';
-        follower.style.top = e.clientY + 'px';
-    }, 50);
-});
+if (cursor && follower) {
+    document.addEventListener('mousemove', (e) => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
+        
+        setTimeout(() => {
+            follower.style.left = e.clientX + 'px';
+            follower.style.top = e.clientY + 'px';
+        }, 50);
+    });
+}
 
 // 2. PARÇACIK ARKA PLAN ANIMASYONU (CANVAS)
 const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
 
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+    function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
 
-const particles = [];
-const particleCount = 45;
+    const particles = [];
+    const particleCount = 45;
 
-for (let i = 0; i < particleCount; i++) {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
-        size: Math.random() * 2 + 1
-    });
-}
+    for (let i = 0; i < particleCount; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: (Math.random() - 0.5) * 0.6,
+            vy: (Math.random() - 0.5) * 0.6,
+            size: Math.random() * 2 + 1
+        });
+    }
 
-function drawParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#00bfff';
-    
-    particles.forEach((p, index) => {
-        p.x += p.vx;
-        p.y += p.vy;
+    function drawParticles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#00bfff';
         
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-        
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-        
-        for (let j = index + 1; j < particles.length; j++) {
-            const p2 = particles[j];
-            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-            if (dist < 120) {
-                ctx.strokeStyle = `rgba(0, 191, 255, ${1 - dist / 120})`;
-                ctx.lineWidth = 0.4;
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(p2.x, p2.y);
-                ctx.stroke();
+        particles.forEach((p, index) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            
+            if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+            if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+            
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            for (let j = index + 1; j < particles.length; j++) {
+                const p2 = particles[j];
+                const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                if (dist < 120) {
+                    ctx.strokeStyle = `rgba(0, 191, 255, ${1 - dist / 120})`;
+                    ctx.lineWidth = 0.4;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(p2.x, p2.y);
+                    ctx.stroke();
+                }
             }
-        }
-    });
-    requestAnimationFrame(drawParticles);
+        });
+        requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
 }
-drawParticles();
 
 // 3. 3D TILT EFEKTİ
 document.querySelectorAll('.tilt-card').forEach(card => {
@@ -1512,17 +1548,23 @@ function setTheme(theme) {
 const welcomeScreen = document.getElementById('welcomeScreen');
 const enterBtn = document.getElementById('enterBtn');
 
-enterBtn.addEventListener('click', () => {
-    welcomeScreen.classList.add('hidden');
-    document.body.classList.remove('enter-locked');
-    audio.play().then(() => {
-        playIcon.className = 'fas fa-pause';
-    }).catch(err => console.log("Otomatik oynatma:", err));
-});
+if (welcomeScreen && enterBtn) {
+    enterBtn.addEventListener('click', () => {
+        welcomeScreen.classList.add('hidden');
+        document.body.classList.remove('enter-locked');
+        if (audio) {
+            audio.play().then(() => {
+                if (playIcon) playIcon.className = 'fas fa-pause';
+            }).catch(err => console.log("Otomatik oynatma:", err));
+        }
+    });
+}
 
 // 6. TEKİL VE KALICI ZİYARETÇİ SAYACI
 async function updateVisitCount() {
     const counterEl = document.getElementById('visitCount');
+    if (!counterEl) return;
+    
     const namespace = "croxin_official_site";
     const key = "croxin_unique_v10";
 
@@ -1616,11 +1658,10 @@ async function handleContact(e) {
         }]
     };
 
-    // Oluşturduğumuz Cloudflare Worker Köprü Linkimiz
     const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
 
     try {
- const response = await fetch(workerBridgeUrl, {
+        const response = await fetch(workerBridgeUrl, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(discordPayload)
@@ -1686,8 +1727,8 @@ function toggleMenu() {
 if (openMenuBtn) openMenuBtn.addEventListener('click', toggleMenu);
 if (closeMenuBtn) closeMenuBtn.addEventListener('click', toggleMenu);
 
-// 11. MÜZİK ÇALAR VE ÇALMA LİSTESİ KONTROLLERİ
-const audioElement = document.getElementById('audioPlayer');
+// 11. MÜZİK ÇALAR KONTROLLERİ
+const audio = document.getElementById('audioPlayer');
 const playBtn = document.getElementById('playBtn');
 const playIcon = document.getElementById('playIcon');
 const progressFill = document.getElementById('progressFill');
@@ -1697,126 +1738,82 @@ const durationEl = document.getElementById('duration');
 const volumeSlider = document.getElementById('volumeSlider');
 const volumeIcon = document.getElementById('volumeIcon');
 
-if (audioElement) audioElement.volume = 0.8;
-
-const playlist = [
-    {
-        title: "Croxin - Synthwave Vibe",
-        src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"
-    },
-    {
-        title: "Croxin - Cyberpunk Chill",
-        src: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=chill-soul-summers-10738.mp3"
-    },
-    {
-        title: "Croxin - Neon Night",
-        src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c2a737f8.mp3?filename=spaced-out-10641.mp3"
-    }
-];
-
-let currentTrackIndex = 0;
-const songTitleEl = document.getElementById('songTitle');
-
-function loadTrack(index) {
-    if (!audioElement) return;
-    audioElement.src = playlist[index].src;
-    if (songTitleEl) songTitleEl.textContent = playlist[index].title;
-    audioElement.load();
+if (audio) {
+    audio.volume = 0.8;
 }
 
-loadTrack(currentTrackIndex);
-
 function togglePlay() {
-    if (!audioElement) return;
-    if (audioElement.paused) {
-        audioElement.play().catch(e => console.log("Oynatma hatası:", e));
+    if (!audio) return;
+    if (audio.paused) {
+        audio.play();
         if (playIcon) playIcon.className = 'fas fa-pause';
     } else {
-        audioElement.pause();
+        audio.pause();
         if (playIcon) playIcon.className = 'fas fa-play';
     }
 }
 
-function nextSong() {
-    currentTrackIndex = (currentTrackIndex + 1) % playlist.length;
-    loadTrack(currentTrackIndex);
-    if (audioElement) {
-        audioElement.play().catch(e => console.log("Oynatma hatası:", e));
-    }
-    if (playIcon) playIcon.className = 'fas fa-pause';
-}
-
-function prevSong() {
-    currentTrackIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
-    loadTrack(currentTrackIndex);
-    if (audioElement) {
-        audioElement.play().catch(e => console.log("Oynatma hatası:", e));
-    }
-    if (playIcon) playIcon.className = 'fas fa-pause';
-}
-
-if (audioElement) {
-    audioElement.addEventListener('ended', () => {
-        nextSong();
-    });
+function restartSong() { 
+    if (audio) audio.currentTime = 0; 
 }
 
 if (volumeSlider) {
     volumeSlider.addEventListener('input', (e) => {
-        if (audioElement) audioElement.volume = e.target.value;
+        if (audio) audio.volume = e.target.value;
         updateVolumeIcon();
     });
 }
 
 function toggleMute() {
-    if (!audioElement) return;
-    if (audioElement.volume > 0) {
-        audioElement.dataset.prevVolume = audioElement.volume;
-        audioElement.volume = 0;
+    if (!audio) return;
+    if (audio.volume > 0) {
+        audio.dataset.prevVolume = audio.volume;
+        audio.volume = 0;
         if (volumeSlider) volumeSlider.value = 0;
     } else {
-        const prev = audioElement.dataset.prevVolume || 0.8;
-        audioElement.volume = prev;
+        const prev = audio.dataset.prevVolume || 0.8;
+        audio.volume = prev;
         if (volumeSlider) volumeSlider.value = prev;
     }
     updateVolumeIcon();
 }
 
 function updateVolumeIcon() {
-    if (!volumeIcon || !audioElement) return;
-    if (audioElement.volume == 0) volumeIcon.className = 'fas fa-volume-xmark';
-    else if (audioElement.volume < 0.5) volumeIcon.className = 'fas fa-volume-low';
+    if (!audio || !volumeIcon) return;
+    if (audio.volume == 0) volumeIcon.className = 'fas fa-volume-xmark';
+    else if (audio.volume < 0.5) volumeIcon.className = 'fas fa-volume-low';
     else volumeIcon.className = 'fas fa-volume-high';
 }
 
-if (audioElement) {
-    audioElement.addEventListener('timeupdate', () => {
-        if(audioElement.duration) {
-            const percent = (audioElement.currentTime / audioElement.duration) * 100;
+if (audio) {
+    audio.addEventListener('timeupdate', () => {
+        if(audio.duration) {
+            const percent = (audio.currentTime / audio.duration) * 100;
             if (progressFill) progressFill.style.width = `${percent}%`;
             
-            let curMin = Math.floor(audioElement.currentTime / 60);
-            let curSec = Math.floor(audioElement.currentTime % 60);
+            let curMin = Math.floor(audio.currentTime / 60);
+            let curSec = Math.floor(audio.currentTime % 60);
             if (curSec < 10) curSec = `0${curSec}`;
             if (currentTimeEl) currentTimeEl.textContent = `${curMin}:${curSec}`;
 
-            let durMin = Math.floor(audioElement.duration / 60);
-            let durSec = Math.floor(audioElement.duration % 60);
+            let durMin = Math.floor(audio.duration / 60);
+            let durSec = Math.floor(audio.duration % 60);
             if (durSec < 10) durSec = `0` + durSec;
             if (durationEl) durationEl.textContent = `${durMin}:${durSec}`;
         }
     });
 }
 
-if (progressBar && audioElement) {
+if (progressBar) {
     progressBar.addEventListener('click', (e) => {
+        if (!audio || !audio.duration) return;
         const width = progressBar.clientWidth;
         const clickX = e.offsetX;
-        audioElement.currentTime = (clickX / width) * audioElement.duration;
+        audio.currentTime = (clickX / width) * audio.duration;
     });
 }
 
-// AI SOHBET SCRIPTLERI
+// 12. CANLI DESTEK WIDGET SCRIPTS
 const chatToggle = document.getElementById('aiChatToggle');
 const chatContainer = document.getElementById('aiChatContainer');
 const chatClose = document.getElementById('aiChatClose');
@@ -1824,20 +1821,19 @@ const chatSend = document.getElementById('aiChatSend');
 const chatInput = document.getElementById('aiChatInput');
 const chatMessages = document.getElementById('aiChatMessages');
 
-if (chatToggle) {
+if (chatToggle && chatContainer) {
     chatToggle.addEventListener('click', () => {
-        if (chatContainer) chatContainer.classList.toggle('hidden');
+        chatContainer.classList.toggle('hidden');
     });
 }
 
-if (chatClose) {
+if (chatClose && chatContainer) {
     chatClose.addEventListener('click', () => {
-        if (chatContainer) chatContainer.classList.add('hidden');
+        chatContainer.classList.add('hidden');
     });
 }
 
-async function handleUserMessage() {
-    if (!chatInput || !chatMessages) return;
+async function handleLiveSupportMessage() {
     const text = chatInput.value.trim();
     if (!text) return;
 
@@ -1851,40 +1847,46 @@ async function handleUserMessage() {
 
     const loadingMsg = document.createElement('div');
     loadingMsg.className = 'ai-message bot';
-    loadingMsg.textContent = 'Yazıyor...';
+    loadingMsg.textContent = 'Destek ekibine iletiliyor...';
     chatMessages.appendChild(loadingMsg);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
+    const discordPayload = {
+        embeds: [{
+            title: "💬 Yeni Canlı Destek Talebi!",
+            color: 16776960,
+            fields: [
+                { name: "👤 Ziyaretçi Mesajı:", value: text, inline: false }
+            ],
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
+
     try {
-        const response = await fetch("https://long-surf-ac45.yusufun5askeri.workers.dev/", {
+        const response = await fetch(workerBridgeUrl, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                action: "ai",
-                message: text
-            })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discordPayload)
         });
 
-        const data = await response.json();
-        
         chatMessages.removeChild(loadingMsg);
 
         const botMsg = document.createElement('div');
         botMsg.className = 'ai-message bot';
 
-        if (data.success) {
-            botMsg.textContent = data.reply;
+        if (response.ok) {
+            botMsg.textContent = "Mesajınız başarıyla yetkiliye iletildi! En kısa sürede geri dönüş yapılacaktır.";
         } else {
-            botMsg.textContent = "Bir hata oluştu: " + (data.error || "Bilinmeyen hata");
+            botMsg.textContent = "Mesaj iletilemedi, lütfen iletişim formu üzerinden ulaşmayı deneyin.";
         }
 
         chatMessages.appendChild(botMsg);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
     } catch (err) {
-        if (loadingMsg.parentNode === chatMessages) {
-            chatMessages.removeChild(loadingMsg);
-        }
+        chatMessages.removeChild(loadingMsg);
         const errorMsg = document.createElement('div');
         errorMsg.className = 'ai-message bot';
         errorMsg.textContent = "Bağlantı hatası oluştu.";
@@ -1894,11 +1896,12 @@ async function handleUserMessage() {
 }
 
 if (chatSend) {
-    chatSend.addEventListener('click', handleUserMessage);
+    chatSend.addEventListener('click', handleLiveSupportMessage);
 }
 
 if (chatInput) {
     chatInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleUserMessage();
+        if (e.key === 'Enter') handleLiveSupportMessage();
     });
 }
+</script>
