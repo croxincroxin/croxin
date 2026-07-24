@@ -1591,6 +1591,7 @@ progressBar.addEventListener('click', (e) => {
 </script>
 
 <!-- DESTEK / CANLI BİLET SİSTEMİ BÖLÜMÜ -->
+<!-- DESTEK / CANLI BİLET SİSTEMİ BÖLÜMÜ -->
 <section id="contact" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
     <!-- Küçültülmüş Canlı Destek Butonu -->
     <div id="liveChatTrigger" onclick="toggleLiveChat()" style="background: linear-gradient(135deg, var(--primary-color), #0077ff); color: #000; padding: 14px 22px; border-radius: 50px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; transition: transform 0.2s;">
@@ -1633,7 +1634,7 @@ progressBar.addEventListener('click', (e) => {
                     <label style="font-size: 12px; opacity: 0.8; margin-bottom: 4px; display: block;"><i class="fas fa-message"></i> Mesajınız</label>
                     <textarea id="ticketMessage" rows="3" placeholder="Sorununuzu yazın..." required style="width: 100%; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--card-border); border-radius: 8px; color: #fff; outline: none; font-size: 13px; resize: none;"></textarea>
                 </div>
-                <!-- Fotoğraf Ekleme Alanı -->
+                <!-- Bilet Açarken Fotoğraf Yükleme Alanı -->
                 <div class="form-group" style="margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
                     <label style="cursor: pointer; color: var(--primary-color); font-size: 13px; display: flex; align-items: center; gap: 6px;">
                         <i class="fas fa-image" style="font-size: 16px;"></i> Görsel Ekle
@@ -1704,8 +1705,10 @@ function previewUserImage(input) {
 
 function clearUserImage() {
     userBase64Image = null;
-    document.getElementById('ticketImageInput').value = "";
-    document.getElementById('chatImageInput').value = "";
+    const tInput = document.getElementById('ticketImageInput');
+    const cInput = document.getElementById('chatImageInput');
+    if (tInput) tInput.value = "";
+    if (cInput) cInput.value = "";
     document.getElementById('ticketImageName').innerText = "";
     document.getElementById('chatImagePreviewContainer').style.display = 'none';
 }
@@ -1853,5 +1856,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
+    
 </body>
 </html>
