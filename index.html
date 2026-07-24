@@ -1,1693 +1,1837 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>realyusufi • Portfolio & Hub</title>
-    <!-- FontAwesome İkonları -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Croxin | Developer & Designer</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+<!-- FontAwesome İkonları -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+
+
+    /* AI Sohbet Widget Stilleri */
+.ai-chat-widget {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
+    font-family: 'Poppins', sans-serif;
+}
+
+.ai-chat-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(0, 242, 254, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ai-chat-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 10px 30px rgba(0, 242, 254, 0.6);
+}
+
+.ai-chat-container {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 480px;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transform-origin: bottom right;
+}
+
+.ai-chat-container.hidden {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none;
+}
+
+.ai-chat-header {
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ai-chat-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.ai-status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10b981;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #10b981;
+}
+
+.ai-chat-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 22px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.ai-chat-close:hover {
+    color: #fff;
+}
+
+.ai-chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ai-message {
+    max-width: 80%;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.4;
+    border-radius: 12px;
+}
+
+.ai-message.bot {
+    background: rgba(255, 255, 255, 0.07);
+    color: #f1f5f9;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.ai-message.user {
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    color: #0f172a;
+    font-weight: 500;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.ai-chat-input-area {
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    gap: 8px;
+}
+
+.ai-chat-input-area input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px 14px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.ai-chat-input-area input:focus {
+    border-color: #00f2fe;
+}
+
+.ai-chat-input-area button {
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: #0f172a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.ai-chat-input-area button:hover {
+    transform: scale(1.05);
+}
     
-    <style>
-        /* TEMEL DEĞİŞKENLER VE TEMA RENKLERİ */
-        :root {
-            --primary-color: #00bfff;
-            --primary-glow: rgba(0, 191, 255, 0.4);
-            --bg-color: #050711;
-            --card-bg: rgba(10, 14, 30, 0.75);
-            --text-color: #ffffff;
-            --text-muted: rgba(255, 255, 255, 0.7);
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        [data-theme="red"] {
-            --primary-color: #ff3333;
-            --primary-glow: rgba(255, 51, 51, 0.4);
-        }
-
-        [data-theme="green"] {
-            --primary-color: #00ff66;
-            --primary-glow: rgba(0, 255, 102, 0.4);
-        }
-
-        [data-theme="gold"] {
-            --primary-color: #ffd700;
-            --primary-glow: rgba(255, 215, 0, 0.4);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-            position: relative;
-        }
-
-        body.enter-locked {
-            overflow: hidden;
-        }
-
-        /* ÖZEL İMLEÇ (CUSTOM CURSOR) */
-        .custom-cursor {
-            position: fixed;
-            width: 8px;
-            height: 8px;
-            background: var(--primary-color);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999999;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px var(--primary-color);
-            transition: transform 0.1s ease;
-        }
-
-        .custom-cursor-follower {
-            position: fixed;
-            width: 30px;
-            height: 30px;
-            border: 1px solid var(--primary-color);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 999998;
-            transform: translate(-50%, -50%);
-            transition: all 0.15s ease-out;
-            opacity: 0.5;
-        }
-
-        @media (max-width: 768px) {
-            .custom-cursor, .custom-cursor-follower { display: none; }
-        }
-
-        /* PARÇACIK CANVAS */
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* GİRİŞ EKRANI (WELCOME SCREEN) */
-        .welcome-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: #03050c;
-            z-index: 9999999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .welcome-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .welcome-content {
-            text-align: center;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-        }
-
-        .welcome-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 2px solid var(--primary-color);
-            box-shadow: 0 0 30px var(--primary-glow);
-            margin-bottom: 20px;
-            object-fit: cover;
-        }
-
-        .welcome-title {
-            font-size: 32px;
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-            color: #fff;
-        }
-
-        .welcome-sub {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-        }
-
-        .enter-btn {
-            background: var(--primary-color);
-            color: #000;
-            border: none;
-            padding: 14px 35px;
-            font-size: 15px;
-            font-weight: 700;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 0 20px var(--primary-glow);
-            transition: 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .enter-btn:hover {
-            transform: scale(1.05);
-            background: #fff;
-            box-shadow: 0 0 30px var(--primary-color);
-        }
-
-        /* TEMA DEĞİŞTİRİCİ PANEL */
-        .theme-switcher {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            display: flex;
-            gap: 10px;
-            z-index: 1000;
-            background: rgba(10, 14, 30, 0.6);
-            backdrop-filter: blur(10px);
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-        }
-
-        .theme-dot {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .theme-dot:hover { transform: scale(1.2); }
-        .dot-blue { background: #00bfff; }
-        .dot-red { background: #ff3333; }
-        .dot-green { background: #00ff66; }
-        .dot-gold { background: #ffd700; }
-
-        /* HAMBURGER & SAĞ MENÜ */
-        .menu-btn {
-            position: fixed;
-            top: 30px;
-            right: 30px;
-            background: rgba(10, 14, 30, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            transition: 0.3s;
-        }
-
-        .menu-btn:hover { background: var(--primary-color); color: #000; box-shadow: 0 0 15px var(--primary-glow); }
-
-        .side-menu {
-            position: fixed;
-            top: 0;
-            right: -320px;
-            width: 300px;
-            height: 100%;
-            background: rgba(8, 12, 25, 0.95);
-            backdrop-filter: blur(20px);
-            border-left: 1px solid var(--border-color);
-            z-index: 10000;
-            padding: 40px 30px;
-            transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .side-menu.active { right: 0; }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            cursor: pointer;
-            align-self: flex-end;
-            margin-bottom: 20px;
-        }
-
-        .side-menu .menu-title {
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-        }
-
-        .side-menu a {
-            color: #fff;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 0;
-            transition: 0.2s;
-        }
-
-        .side-menu a:hover { color: var(--primary-color); transform: translateX(5px); }
-        .menu-divider { width: 100%; height: 1px; background: var(--border-color); margin: 10px 0; }
-
-        /* HEADER & HERO */
-        header {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-        }
-
-        .profile {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 3px solid var(--primary-color);
-            box-shadow: 0 0 35px var(--primary-glow);
-            object-fit: cover;
-            margin-bottom: 25px;
-            animation: floatProfile 4s ease-in-out infinite;
-        }
-
-        @keyframes floatProfile {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .logo {
-            font-size: 65px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #fff, var(--primary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .subtitle {
-            font-size: 18px;
-            color: var(--text-muted);
-            margin-bottom: 25px;
-            font-weight: 500;
-        }
-
-        /* DISCORD DURUM KARTI */
-        .discord-status-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 10px 20px;
-            border-radius: 30px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #747f8d;
-        }
-
-        .discord-text {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .discord-text strong {
-            color: #fff;
-        }
-
-        /* GÖRÜNTÜLENME SAYACI */
-        .views-counter {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: 0.3s;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn:hover {
-            border-color: var(--primary-color);
-            color: var(--primary-color);
-            box-shadow: 0 0 20px var(--primary-glow);
-            transform: translateY(-3px);
-        }
-
-        /* SKILLS MARQUEE */
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            background: rgba(10, 14, 30, 0.5);
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            padding: 20px 0;
-            white-space: nowrap;
-            margin-bottom: 80px;
-        }
-
-        .marquee-content {
-            display: inline-flex;
-            gap: 40px;
-            animation: marqueeScroll 25s linear infinite;
-        }
-
-        .skill-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-muted);
-            background: var(--card-bg);
-            padding: 10px 20px;
-            border-radius: 15px;
-            border: 1px solid var(--border-color);
-        }
-
-        .skill-item i { color: var(--primary-color); font-size: 20px; }
-
-        @keyframes marqueeScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* GENEL BÖLÜMLER */
-        section {
-            max-width: 1100px;
-            margin: 0 auto 100px auto;
-            padding: 0 20px;
-        }
-
-        .title {
-            font-size: 36px;
-            font-weight: 800;
-            margin-bottom: 40px;
-            text-align: center;
-            letter-spacing: 1px;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 35px;
-            backdrop-filter: blur(15px);
-            transition: transform 0.1s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-        }
-
-        .card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 10px 30px var(--primary-glow);
-        }
-
-        .card h3 {
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #fff;
-        }
-
-        .card p {
-            color: var(--text-muted);
-            line-height: 1.6;
-            font-size: 15px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: rgba(0, 191, 255, 0.1);
-            color: var(--primary-color);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            border: 1px solid var(--primary-glow);
-        }
-
-        /* PROJE FİLTRELERİ */
-        .project-filters {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 35px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--primary-color);
-            color: #000;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        /* FAQ ACCORDION */
-        .faq-container {
-            max-width: 800px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .faq-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 15px;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            transition: border-color 0.3s;
-        }
-
-        .faq-item.open { border-color: var(--primary-color); }
-
-        .faq-question {
-            padding: 20px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-        }
-
-        .faq-question i { transition: transform 0.3s; color: var(--primary-color); }
-        .faq-item.open .faq-question i { transform: rotate(180deg); }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            padding: 0 25px;
-            color: var(--text-muted);
-            line-height: 1.6;
-            transition: max-height 0.3s ease, padding 0.3s ease;
-        }
-
-        .faq-item.open .faq-answer {
-            max-height: 200px;
-            padding: 0 25px 20px 25px;
-        }
-
-        /* İLETİŞİM FORMU */
-        .contact-container {
-            max-width: 700px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 25px;
-            padding: 40px;
-            backdrop-filter: blur(20px);
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-
-        .form-group input, .form-group textarea {
-            width: 100%;
-            background: rgba(5, 7, 17, 0.6);
-            border: 1px solid var(--border-color);
-            padding: 14px 18px;
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus, .form-group textarea:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .send-btn {
-            width: 100%;
-            background: var(--primary-color);
-            color: #000;
-            border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 0 20px var(--primary-glow);
-        }
-
-        .send-btn:hover {
-            background: #fff;
-            box-shadow: 0 0 30px var(--primary-color);
-        }
-
-        /* MODAL PENCERE */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(15px);
-            z-index: 100000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .modal-box {
-            background: #0a0e20;
-            border: 1px solid var(--primary-color);
-            padding: 35px;
-            border-radius: 25px;
-            max-width: 500px;
-            width: 90%;
-            position: relative;
-            box-shadow: 0 0 40px var(--primary-glow);
-            transform: scale(0.8);
-            transition: transform 0.3s ease;
-        }
-
-        .modal-overlay.active .modal-box { transform: scale(1); }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 22px;
-            cursor: pointer;
-        }
-
-        .modal-title {
-            font-size: 26px;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-
-        .modal-desc {
-            line-height: 1.6;
-            color: var(--text-muted);
-            margin-bottom: 25px;
-        }
-
-        /* MÜZİK ÇALAR */
-        .music-player {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 650px;
-            background: rgba(10, 14, 30, 0.85);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            z-index: 9999;
-        }
-
-        .cover-art {
-            width: 50px;
-            height: 50px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-            flex-shrink: 0;
-        }
-
-        .player-info {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            overflow: hidden;
-        }
-
-        .song-title {
-            font-size: 14px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            color: #fff;
-        }
-
-        .progress-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .progress-bar {
-            flex-grow: 1;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .progress-fill {
-            width: 0%;
-            height: 100%;
-            background: var(--primary-color);
-            border-radius: 2px;
-            transition: width 0.1s linear;
-        }
-
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .control-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: 0.2s;
-        }
-
-        .control-btn:hover { opacity: 1; transform: scale(1.1); color: var(--primary-color); }
-
-        .play-btn {
-            width: 38px;
-            height: 38px;
-            background: var(--primary-color);
-            color: #000;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            opacity: 1;
-        }
-
-        .play-btn:hover { color: #000; background: #fff; box-shadow: 0 0 15px var(--primary-color); }
-
-        .volume-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-left: 5px;
-        }
-
-        .volume-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 15px;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: 0.2s;
-        }
-
-        .volume-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 70px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            cursor: pointer;
-            box-shadow: 0 0 8px var(--primary-color);
-        }
-
-        /* AI SOHBET WIDGET STİLLERİ */
-        .ai-chat-widget {
-            position: fixed;
-            bottom: 100px;
-            right: 25px;
-            z-index: 99998;
-        }
-
-        .ai-chat-toggle {
-            width: 55px;
-            height: 55px;
-            background: var(--primary-color);
-            color: #000;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 25px var(--primary-glow);
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .ai-chat-toggle:hover {
-            transform: scale(1.1);
-            background: #fff;
-            box-shadow: 0 0 30px var(--primary-color);
-        }
-
-        .ai-chat-container {
-            position: absolute;
-            bottom: 70px;
-            right: 0;
-            width: 350px;
-            height: 480px;
-            background: rgba(8, 12, 25, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-            transition: 0.3s ease;
-        }
-
-        .ai-chat-container.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px) scale(0.95);
-        }
-
-        .ai-chat-header {
-            padding: 15px 20px;
-            background: rgba(10, 14, 30, 0.9);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .ai-chat-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            font-size: 15px;
-        }
-
-        .ai-status-dot {
-            width: 8px;
-            height: 8px;
-            background: #00ff66;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #00ff66;
-        }
-
-        .ai-chat-close {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .ai-chat-close:hover { color: #fff; }
-
-        .ai-chat-messages {
-            flex-grow: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .ai-message {
-            max-width: 80%;
-            padding: 10px 14px;
-            border-radius: 14px;
-            font-size: 13.5px;
-            line-height: 1.5;
-        }
-
-        .ai-message.bot {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            color: #fff;
-            align-self: flex-start;
-            border-bottom-left-radius: 4px;
-        }
-
-        .ai-message.user {
-            background: var(--primary-color);
-            color: #000;
-            font-weight: 500;
-            align-self: flex-end;
-            border-bottom-right-radius: 4px;
-        }
-
-        .ai-chat-input-area {
-            padding: 12px;
-            background: rgba(10, 14, 30, 0.9);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            gap: 8px;
-        }
-
-        .ai-chat-input-area input {
-            flex-grow: 1;
-            background: rgba(5, 7, 17, 0.6);
-            border: 1px solid var(--border-color);
-            padding: 10px 14px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 13.5px;
-            outline: none;
-        }
-
-        .ai-chat-input-area input:focus { border-color: var(--primary-color); }
-
-        .ai-chat-input-area button {
-            background: var(--primary-color);
-            border: none;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            color: #000;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .ai-chat-input-area button:hover { background: #fff; }
-
-        footer {
-            padding: 30px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 13px;
-        }
-
-        @media(max-width: 700px) {
-            .logo { font-size: 45px; }
-            .music-player { width: 95%; padding: 10px 12px; gap: 10px; }
-            .volume-slider { width: 50px; }
-            .ai-chat-container { width: 90vw; right: -15px; }
-        }
-    </style>
+:root {
+    --primary-color: #00bfff;
+    --secondary-color: #8a2be2;
+    --bg-dark: #050816;
+    --card-bg: rgba(255, 255, 255, 0.07);
+    --card-border: rgba(255, 255, 255, 0.15);
+    --text-color: #ffffff;
+}
+
+[data-theme="red"] {
+    --primary-color: #ff0055;
+    --secondary-color: #ff5500;
+}
+
+[data-theme="green"] {
+    --primary-color: #00ff88;
+    --secondary-color: #00aa55;
+}
+
+[data-theme="gold"] {
+    --primary-color: #ffcc00;
+    --secondary-color: #ff8800;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Poppins,sans-serif;
+cursor: none; /* Özel imleç için varsayılanı gizle */
+}
+
+html{
+scroll-behavior: smooth;
+}
+
+body{
+background: var(--bg-dark);
+color: var(--text-color);
+overflow-x:hidden;
+padding-bottom: 90px;
+transition: background 0.3s;
+}
+
+/* Sayfa Tam Yüklenene Kadar Kaydırmayı Engelle */
+body.enter-locked {
+overflow: hidden;
+}
+
+/* ÖZEL MOUSE İMLECİ (CUSTOM CURSOR) */
+.custom-cursor {
+position: fixed;
+width: 12px;
+height: 12px;
+background: var(--primary-color);
+border-radius: 50%;
+pointer-events: none;
+z-index: 999999;
+transform: translate(-50%, -50%);
+transition: transform 0.1s ease, background 0.3s;
+box-shadow: 0 0 10px var(--primary-color);
+}
+
+.custom-cursor-follower {
+position: fixed;
+width: 36px;
+height: 36px;
+border: 2px solid var(--primary-color);
+border-radius: 50%;
+pointer-events: none;
+z-index: 999998;
+transform: translate(-50%, -50%);
+transition: transform 0.2s ease, width 0.2s, height 0.2s, border-color 0.3s;
+opacity: 0.6;
+}
+
+/* CANVAS PARÇACIK ARKA PLANI */
+#particles-canvas {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: -2;
+pointer-events: none;
+}
+
+/* ÖZEL GİRİŞ EKRANI */
+.welcome-screen {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+background: #03050d;
+z-index: 99999;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+transition: all 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.welcome-screen.hidden {
+opacity: 0;
+visibility: hidden;
+transform: translateY(-100%);
+}
+
+.welcome-screen::before {
+content: "";
+position: absolute;
+width: 300px;
+height: 300px;
+background: radial-gradient(circle, var(--primary-color), transparent 70%);
+filter: blur(60px);
+opacity: 0.4;
+animation: pulseLight 4s infinite alternate;
+}
+
+@keyframes pulseLight {
+0% { transform: scale(1) translate(-30px, -30px); }
+100% { transform: scale(1.3) translate(30px, 30px); }
+}
+
+.welcome-content {
+position: relative;
+z-index: 2;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 20px;
+padding: 20px;
+}
+
+.welcome-avatar {
+width: 130px;
+height: 130px;
+border-radius: 50%;
+object-fit: cover;
+border: 3px solid var(--primary-color);
+box-shadow: 0 0 35px var(--primary-color);
+animation: floatAvatar 3s ease-in-out infinite;
+}
+
+@keyframes floatAvatar {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-12px); }
+}
+
+.welcome-title {
+font-size: 38px;
+font-weight: 800;
+letter-spacing: 4px;
+background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+-webkit-background-clip: text;
+color: transparent;
+text-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+}
+
+.welcome-sub {
+font-size: 14px;
+opacity: 0.7;
+letter-spacing: 2px;
+text-transform: uppercase;
+margin-bottom: 10px;
+}
+
+.enter-btn {
+padding: 16px 40px;
+font-size: 16px;
+font-weight: 700;
+color: #fff;
+background: rgba(255, 255, 255, 0.05);
+border: 2px solid var(--primary-color);
+border-radius: 30px;
+cursor: pointer;
+backdrop-filter: blur(10px);
+box-shadow: 0 0 20px var(--primary-color);
+transition: all 0.4s ease;
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.enter-btn:hover {
+background: var(--primary-color);
+color: #000;
+box-shadow: 0 0 40px var(--primary-color);
+transform: scale(1.08);
+}
+
+/* ZİYARETÇİ / GÖRÜNTÜLENME SAYAÇ BADGE'İ */
+.views-counter {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid var(--card-border);
+padding: 6px 16px;
+border-radius: 20px;
+backdrop-filter: blur(10px);
+font-size: 14px;
+font-weight: 600;
+margin-top: 15px;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.views-counter i {
+color: var(--primary-color);
+}
+
+/* SAĞ ÜST AÇILIR MENÜ VE HAMBURGER BUTONU */
+.menu-btn {
+position: fixed;
+top: 25px;
+right: 25px;
+width: 50px;
+height: 50px;
+background: rgba(255, 255, 255, 0.08);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 12px;
+backdrop-filter: blur(10px);
+color: #fff;
+font-size: 20px;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 10001;
+transition: 0.3s;
+}
+
+.menu-btn:hover {
+background: var(--primary-color);
+color: #000;
+box-shadow: 0 0 20px var(--primary-color);
+transform: scale(1.05);
+}
+
+.side-menu {
+position: fixed;
+top: 0;
+right: -320px;
+width: 300px;
+height: 100vh;
+background: rgba(5, 8, 22, 0.95);
+backdrop-filter: blur(25px);
+border-left: 1px solid rgba(255, 255, 255, 0.1);
+box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+z-index: 10000;
+padding: 80px 30px 30px 30px;
+display: flex;
+flex-direction: column;
+gap: 20px;
+transition: right 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.side-menu.active {
+right: 0;
+}
+
+.close-btn {
+position: absolute;
+top: 25px;
+right: 25px;
+background: none;
+border: none;
+color: rgba(255, 255, 255, 0.7);
+font-size: 24px;
+cursor: pointer;
+transition: 0.3s;
+}
+
+.close-btn:hover {
+color: var(--primary-color);
+transform: rotate(90deg);
+}
+
+.menu-title {
+font-size: 14px;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(--primary-color);
+margin-bottom: 10px;
+font-weight: 600;
+}
+
+.side-menu a {
+color: #fff;
+text-decoration: none;
+font-size: 18px;
+font-weight: 500;
+opacity: 0.8;
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 10px;
+border-radius: 10px;
+transition: 0.3s;
+}
+
+.side-menu a:hover {
+opacity: 1;
+background: rgba(255, 255, 255, 0.08);
+color: var(--primary-color);
+padding-left: 18px;
+}
+
+.menu-divider {
+height: 1px;
+background: rgba(255, 255, 255, 0.1);
+margin: 10px 0;
+}
+
+/* RENK TEMA DEĞİŞTİRİCİ PANEL */
+.theme-switcher {
+position: fixed;
+top: 25px;
+left: 25px;
+z-index: 10001;
+display: flex;
+gap: 8px;
+background: rgba(255, 255, 255, 0.08);
+padding: 8px;
+border-radius: 30px;
+backdrop-filter: blur(10px);
+border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.theme-dot {
+width: 20px;
+height: 20px;
+border-radius: 50%;
+cursor: pointer;
+transition: transform 0.2s;
+border: 2px solid rgba(255,255,255,0.5);
+}
+
+.theme-dot:hover {
+transform: scale(1.25);
+}
+
+.dot-blue { background: #00bfff; }
+.dot-red { background: #ff0055; }
+.dot-green { background: #00ff88; }
+.dot-gold { background: #ffcc00; }
+
+/* HEADER & HERO SECTION */
+header{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+text-align:center;
+flex-direction:column;
+padding: 0 20px;
+}
+
+.logo{
+font-size:85px;
+font-weight:800;
+letter-spacing:10px;
+background:linear-gradient(90deg, var(--secondary-color), var(--primary-color));
+-webkit-background-clip:text;
+color:transparent;
+animation:glow 3s infinite;
+}
+
+@keyframes glow{
+50%{
+filter:drop-shadow(0 0 30px var(--primary-color));
+}
+}
+
+.profile{
+width:180px;
+height:180px;
+border-radius:50%;
+object-fit:cover;
+border:4px solid var(--primary-color);
+box-shadow:0 0 40px var(--primary-color);
+margin-bottom:30px;
+animation:float 4s infinite;
+}
+
+@keyframes float{
+50%{
+transform:translateY(-20px);
+}
+}
+
+.subtitle{
+font-size:22px;
+opacity:.8;
+margin-top:20px;
+}
+
+.buttons{
+margin-top:30px;
+}
+
+.btn{
+display:inline-block;
+padding:15px 35px;
+margin:10px;
+background: var(--primary-color);
+color:white;
+text-decoration:none;
+border-radius:15px;
+font-weight:bold;
+transition:.3s;
+box-shadow: 0 0 15px rgba(0, 191, 255, 0.3);
+}
+
+.btn:hover{
+transform:scale(1.1);
+box-shadow:0 0 30px var(--primary-color);
+color: #000;
+}
+
+/* DISCORD CANLI DURUM CARD'I */
+.discord-status-card {
+margin-top: 25px;
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid var(--card-border);
+padding: 12px 24px;
+border-radius: 50px;
+display: flex;
+align-items: center;
+gap: 15px;
+backdrop-filter: blur(10px);
+}
+
+.status-indicator {
+width: 14px;
+height: 14px;
+background: #43b581; /* Discord Online Green */
+border-radius: 50%;
+box-shadow: 0 0 10px #43b581;
+position: relative;
+}
+
+.status-indicator::after {
+content: "";
+position: absolute;
+width: 100%;
+height: 100%;
+background: #43b581;
+border-radius: 50%;
+animation: statusPing 1.5s infinite ease-out;
+opacity: 0.6;
+}
+
+@keyframes statusPing {
+0% { transform: scale(1); opacity: 0.8; }
+100% { transform: scale(2.5); opacity: 0; }
+}
+
+.discord-text {
+font-size: 13px;
+font-weight: 500;
+opacity: 0.9;
+}
+
+.discord-text strong {
+color: var(--primary-color);
+}
+
+/* SKILLS MARQUEE (SONSUZ KAYAN ŞERİT) */
+.marquee-container {
+width: 100%;
+overflow: hidden;
+background: rgba(255, 255, 255, 0.03);
+border-top: 1px solid rgba(255, 255, 255, 0.1);
+border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+padding: 20px 0;
+margin: 40px 0;
+position: relative;
+}
+
+.marquee-content {
+display: flex;
+gap: 50px;
+width: max-content;
+animation: marqueeScroll 20s linear infinite;
+}
+
+@keyframes marqueeScroll {
+0% { transform: translateX(0); }
+100% { transform: translateX(-50%); }
+}
+
+.skill-item {
+display: flex;
+align-items: center;
+gap: 12px;
+font-size: 18px;
+font-weight: 600;
+opacity: 0.8;
+transition: opacity 0.3s;
+}
+
+.skill-item i {
+font-size: 26px;
+color: var(--primary-color);
+}
+
+/* BÖLÜMLER GENEL */
+section{
+padding:90px 10%;
+}
+
+.title{
+text-align:center;
+font-size:45px;
+margin-bottom:45px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:30px;
+}
+
+/* 3D TILT EFEKTLİ KARTLAR */
+.card{
+background: var(--card-bg);
+border: 1px solid var(--card-border);
+padding:30px;
+border-radius:25px;
+backdrop-filter:blur(15px);
+transition: transform 0.2s ease, box-shadow 0.3s;
+transform-style: preserve-3d;
+will-change: transform;
+}
+
+.card:hover{
+box-shadow: 0 15px 35px rgba(0, 191, 255, 0.25);
+border-color: var(--primary-color);
+}
+
+.card h3{
+font-size:25px;
+margin-bottom:15px;
+color: var(--primary-color);
+}
+
+.card p{
+opacity:.8;
+line-height:1.7;
+}
+
+/* PROJE FİLTRE BUTONLARI */
+.project-filters {
+display: flex;
+justify-content: center;
+gap: 15px;
+margin-bottom: 35px;
+flex-wrap: wrap;
+}
+
+.filter-btn {
+padding: 10px 22px;
+background: rgba(255, 255, 255, 0.05);
+border: 1px solid var(--card-border);
+color: #fff;
+border-radius: 20px;
+cursor: pointer;
+font-weight: 600;
+transition: 0.3s;
+}
+
+.filter-btn.active, .filter-btn:hover {
+background: var(--primary-color);
+color: #000;
+box-shadow: 0 0 15px var(--primary-color);
+}
+
+.project-card {
+cursor: pointer;
+position: relative;
+overflow: hidden;
+}
+
+.project-card .badge {
+display: inline-block;
+padding: 4px 12px;
+background: rgba(0, 191, 255, 0.15);
+color: var(--primary-color);
+border-radius: 12px;
+font-size: 12px;
+font-weight: 600;
+margin-bottom: 12px;
+}
+
+/* FAQ SIK SORULAN SORULAR ACCORDION */
+.faq-container {
+max-width: 800px;
+margin: 0 auto;
+display: flex;
+flex-direction: column;
+gap: 15px;
+}
+
+.faq-item {
+background: var(--card-bg);
+border: 1px solid var(--card-border);
+border-radius: 15px;
+overflow: hidden;
+transition: 0.3s;
+}
+
+.faq-question {
+padding: 20px 25px;
+font-size: 18px;
+font-weight: 600;
+display: flex;
+justify-content: space-between;
+align-items: center;
+cursor: pointer;
+}
+
+.faq-question i {
+transition: transform 0.3s;
+color: var(--primary-color);
+}
+
+.faq-answer {
+max-height: 0;
+overflow: hidden;
+padding: 0 25px;
+opacity: 0;
+transition: all 0.3s ease;
+line-height: 1.6;
+font-size: 15px;
+color: rgba(255, 255, 255, 0.8);
+}
+
+.faq-item.open .faq-answer {
+max-height: 150px;
+padding: 0 25px 20px 25px;
+opacity: 1;
+}
+
+.faq-item.open .faq-question i {
+transform: rotate(180deg);
+}
+
+/* İLETİŞİM FORMU */
+.contact-container {
+max-width: 650px;
+margin: 0 auto;
+background: var(--card-bg);
+border: 1px solid var(--card-border);
+padding: 35px;
+border-radius: 25px;
+backdrop-filter: blur(15px);
+}
+
+.form-group {
+margin-bottom: 20px;
+display: flex;
+flex-direction: column;
+gap: 8px;
+text-align: left;
+}
+
+.form-group label {
+font-size: 14px;
+font-weight: 600;
+color: var(--primary-color);
+}
+
+.form-group input, .form-group textarea {
+width: 100%;
+padding: 14px 18px;
+background: rgba(0, 0, 0, 0.3);
+border: 1px solid var(--card-border);
+border-radius: 12px;
+color: #fff;
+font-size: 15px;
+outline: none;
+transition: 0.3s;
+}
+
+.form-group input:focus, .form-group textarea:focus {
+border-color: var(--primary-color);
+box-shadow: 0 0 15px rgba(0, 191, 255, 0.2);
+}
+
+.send-btn {
+width: 100%;
+padding: 15px;
+background: var(--primary-color);
+border: none;
+border-radius: 12px;
+color: #000;
+font-weight: 700;
+font-size: 16px;
+cursor: pointer;
+transition: 0.3s;
+box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+}
+
+.send-btn:hover:not(:disabled) {
+transform: translateY(-3px);
+box-shadow: 0 0 30px var(--primary-color);
+}
+
+.send-btn:disabled {
+background: rgba(255, 255, 255, 0.1);
+color: rgba(255, 255, 255, 0.4);
+box-shadow: none;
+cursor: not-allowed;
+transform: none;
+}
+
+/* MODAL DETAY PENCERESİ */
+.modal-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+background: rgba(0, 0, 0, 0.85);
+backdrop-filter: blur(15px);
+z-index: 100000;
+display: flex;
+justify-content: center;
+align-items: center;
+opacity: 0;
+pointer-events: none;
+transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+opacity: 1;
+pointer-events: all;
+}
+
+.modal-box {
+background: #0a0e20;
+border: 1px solid var(--primary-color);
+padding: 35px;
+border-radius: 25px;
+max-width: 500px;
+width: 90%;
+position: relative;
+box-shadow: 0 0 40px var(--primary-color);
+transform: scale(0.8);
+transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-box {
+transform: scale(1);
+}
+
+.modal-close {
+position: absolute;
+top: 20px;
+right: 20px;
+background: none;
+border: none;
+color: #fff;
+font-size: 22px;
+cursor: pointer;
+}
+
+.modal-title {
+font-size: 26px;
+color: var(--primary-color);
+margin-bottom: 15px;
+}
+
+.modal-desc {
+line-height: 1.6;
+opacity: 0.85;
+margin-bottom: 20px;
+}
+
+/* FOOTER & MÜZİK ÇALAR */
+footer{
+padding:30px;
+text-align:center;
+opacity:.5;
+}
+
+.music-player {
+position: fixed;
+bottom: 20px;
+left: 50%;
+transform: translateX(-50%);
+width: 90%;
+max-width: 650px;
+background: rgba(10, 14, 30, 0.85);
+backdrop-filter: blur(15px);
+border: 1px solid rgba(255, 255, 255, 0.15);
+border-radius: 20px;
+padding: 12px 20px;
+display: flex;
+align-items: center;
+gap: 15px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+z-index: 9999;
+}
+
+.cover-art {
+width: 50px;
+height: 50px;
+border-radius: 10px;
+object-fit: cover;
+border: 1px solid rgba(255, 255, 255, 0.2);
+flex-shrink: 0;
+}
+
+.player-info {
+flex-grow: 1;
+display: flex;
+flex-direction: column;
+gap: 4px;
+overflow: hidden;
+}
+
+.song-title {
+font-size: 14px;
+font-weight: 600;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+color: #fff;
+}
+
+.progress-container {
+display: flex;
+align-items: center;
+gap: 8px;
+font-size: 11px;
+opacity: 0.7;
+}
+
+.progress-bar {
+flex-grow: 1;
+height: 4px;
+background: rgba(255, 255, 255, 0.2);
+border-radius: 2px;
+cursor: pointer;
+position: relative;
+}
+
+.progress-fill {
+width: 0%;
+height: 100%;
+background: var(--primary-color);
+border-radius: 2px;
+transition: width 0.1s linear;
+}
+
+.controls {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.control-btn {
+background: none;
+border: none;
+color: #fff;
+font-size: 16px;
+cursor: pointer;
+opacity: 0.8;
+transition: 0.2s;
+}
+
+.control-btn:hover {
+opacity: 1;
+transform: scale(1.1);
+color: var(--primary-color);
+}
+
+.play-btn {
+width: 38px;
+height: 38px;
+background: var(--primary-color);
+color: #000;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 14px;
+opacity: 1;
+}
+
+.play-btn:hover {
+color: #000;
+background: #fff;
+box-shadow: 0 0 15px var(--primary-color);
+}
+
+.volume-container {
+display: flex;
+align-items: center;
+gap: 8px;
+margin-left: 5px;
+}
+
+.volume-btn {
+background: none;
+border: none;
+color: #fff;
+font-size: 15px;
+cursor: pointer;
+opacity: 0.8;
+transition: 0.2s;
+}
+
+.volume-btn:hover {
+color: var(--primary-color);
+opacity: 1;
+}
+
+.volume-slider {
+-webkit-appearance: none;
+appearance: none;
+width: 70px;
+height: 4px;
+background: rgba(255, 255, 255, 0.2);
+border-radius: 2px;
+outline: none;
+cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 12px;
+height: 12px;
+border-radius: 50%;
+background: var(--primary-color);
+cursor: pointer;
+box-shadow: 0 0 8px var(--primary-color);
+}
+
+@media(max-width:700px){
+.logo{ font-size:50px; }
+.welcome-title { font-size: 28px; }
+.music-player { width: 95%; padding: 10px 12px; gap: 10px; }
+.volume-slider { width: 50px; }
+.theme-switcher { top: auto; bottom: 90px; left: 20px; }
+}
+</style>
+
 </head>
 
 <body class="enter-locked">
 
-    <!-- ÖZEL NEON MOUSE İMLECİ -->
-    <div class="custom-cursor" id="cursor"></div>
-    <div class="custom-cursor-follower" id="follower"></div>
+<!-- ÖZEL NENON MOUSE İMLECİ -->
+<div class="custom-cursor" id="cursor"></div>
+<div class="custom-cursor-follower" id="follower"></div>
 
-    <!-- PARÇACIK ARKA PLAN CANVAS -->
-    <canvas id="particles-canvas"></canvas>
+<!-- PARÇACIK ARKA PLAN CANVAS -->
+<canvas id="particles-canvas"></canvas>
 
-    <!-- RENK TEMA DEĞİŞTİRİCİ PANEL -->
-    <div class="theme-switcher">
-        <div class="theme-dot dot-blue" onclick="setTheme('default')" title="Mavi / Mor"></div>
-        <div class="theme-dot dot-red" onclick="setTheme('red')" title="Kırmızı / Turuncu"></div>
-        <div class="theme-dot dot-green" onclick="setTheme('green')" title="Neon Yeşil"></div>
-        <div class="theme-dot dot-gold" onclick="setTheme('gold')" title="Altın / Sarı"></div>
+<!-- RENK TEMA DEĞİŞTİRİCİ PANEL -->
+<div class="theme-switcher">
+    <div class="theme-dot dot-blue" onclick="setTheme('default')" title="Mavi / Mor"></div>
+    <div class="theme-dot dot-red" onclick="setTheme('red')" title="Kırmızı / Turuncu"></div>
+    <div class="theme-dot dot-green" onclick="setTheme('green')" title="Neon Yeşil"></div>
+    <div class="theme-dot dot-gold" onclick="setTheme('gold')" title="Altın / Sarı"></div>
+</div>
+
+<!-- GİRİŞ EKRANI (WELCOME SCREEN) -->
+<div class="welcome-screen" id="welcomeScreen">
+    <div class="welcome-content">
+        <img class="welcome-avatar" src="https://github.com/realyusufi.png?v=2" alt="Portfolio">
+        <div class="welcome-title">WELCOME TO CROXIN</div>
+        <div class="welcome-sub">Developer • Designer • Community Manager</div>
+        <button class="enter-btn" id="enterBtn">
+            <i class="fas fa-arrow-right-to-bracket"></i> SİTEYE GİRİŞ YAP
+        </button>
     </div>
+</div>
 
-    <!-- GİRİŞ EKRANI (WELCOME SCREEN) -->
-    <div class="welcome-screen" id="welcomeScreen">
-        <div class="welcome-content">
-            <img class="welcome-avatar" src="https://github.com/realyusufi.png?v=2" alt="Portfolio">
-            <div class="welcome-title">WELCOME TO CROXIN</div>
-            <div class="welcome-sub">Developer • Designer • Community Manager</div>
-            <button class="enter-btn" id="enterBtn">
-                <i class="fas fa-arrow-right-to-bracket"></i> SİTEYE GİRİŞ YAP
+<!-- HAMBURGER MENÜ BUTONU -->
+<button class="menu-btn" id="openMenuBtn"><i class="fas fa-bars"></i></button>
+
+<!-- SAĞDAN AÇILAN PANEL -->
+<div class="side-menu" id="sideMenu">
+    <button class="close-btn" id="closeMenuBtn"><i class="fas fa-times"></i></button>
+    
+    <div class="menu-title">Navigation</div>
+    <a href="#" onclick="toggleMenu()"><i class="fas fa-house"></i> Home</a>
+    <a href="#about" onclick="toggleMenu()"><i class="fas fa-user"></i> About</a>
+    <a href="#projects" onclick="toggleMenu()"><i class="fas fa-code"></i> Projects</a>
+    <a href="#faq" onclick="toggleMenu()"><i class="fas fa-circle-question"></i> S.S.S.</a>
+    <a href="#contact" onclick="toggleMenu()"><i class="fas fa-envelope"></i> İletişim</a>
+    
+    <div class="menu-divider"></div>
+    
+    <div class="menu-title">Socials</div>
+    <a href="https://discord.com/users/1403418770009227387" target="_blank"><i class="fab fa-discord"></i> Discord</a>
+    <a href="https://instagram.com/_gams1z" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+</div>
+
+<header>
+
+<img class="profile" src="https://github.com/realyusufi.png?v=2" alt="Croxin Logo">
+
+<div class="logo">CROXIN</div>
+
+<p class="subtitle">Roblox Developer • Web Designer • Community Manager</p>
+
+<!-- DISCORD CANLI DURUM CARD'I -->
+<div class="discord-status-card">
+    <div class="status-indicator" id="discordDot"></div>
+    <div class="discord-text" id="discordText">Discord: <strong>realyusufi</strong> (Bağlanıyor...)</div>
+</div>
+    <script>
+    async function updateDiscordStatus() {
+    try {
+        const response = await fetch('https://api.lanyard.rest/v1/users/1403418770009227387');
+        const data = await response.json();
+        
+        if (data.success) {
+            const user = data.data;
+            const dot = document.getElementById('discordDot');
+            const text = document.getElementById('discordText');
+            
+            let color = '#747f8d';
+            if (user.discord_status === 'online') color = '#43b581';
+            if (user.discord_status === 'idle') color = '#faa61a';
+            if (user.discord_status === 'dnd') color = '#f04747';
+            
+            dot.style.background = color;
+            dot.style.boxShadow = `0 0 10px ${color}`;
+            
+            let activityName = 'Aktif';
+            if (user.activities && user.activities.length > 0) {
+                activityName = user.activities[0].name;
+            }
+            
+            text.innerHTML = `Discord: <strong>${user.discord_user.username}</strong> (${activityName})`;
+        }
+    } catch (err) {
+        console.log("Discord durumu alınamadı");
+    }
+}
+
+updateDiscordStatus();
+setInterval(updateDiscordStatus, 5000);
+</script>
+
+<!-- GÖRÜNTÜLENME SAYACI -->
+<div class="views-counter">
+    <i class="fas fa-user-check"></i> Siz <span id="visitCount">...</span>. ziyaretçisiniz
+</div>
+
+<div class="buttons">
+<a class="btn" href="https://discord.com/users/1403418770009227387" target="_blank">Discord</a>
+<a class="btn" href="https://instagram.com/_gams1z" target="_blank">Instagram</a>
+<a class="btn" href="#projects">Projects</a>
+</div>
+
+</header>
+
+<!-- SKILLS MARQUEE (KAYAN TEKNOLOJİ ŞERİDİ) -->
+<div class="marquee-container">
+    <div class="marquee-content">
+        <div class="skill-item"><i class="fab fa-html5"></i> HTML5</div>
+        <div class="skill-item"><i class="fab fa-css3-alt"></i> CSS3</div>
+        <div class="skill-item"><i class="fab fa-js"></i> JavaScript</div>
+        <div class="skill-item"><i class="fas fa-gamepad"></i> Roblox Studio (Lua)</div>
+        <div class="skill-item"><i class="fas fa-code"></i> VS Code</div>
+        <div class="skill-item"><i class="fab fa-discord"></i> Discord Bot Dev</div>
+        <!-- Tekrar eden öğeler (Sonsuz döngü için) -->
+        <div class="skill-item"><i class="fab fa-html5"></i> HTML5</div>
+        <div class="skill-item"><i class="fab fa-css3-alt"></i> CSS3</div>
+        <div class="skill-item"><i class="fab fa-js"></i> JavaScript</div>
+        <div class="skill-item"><i class="fas fa-gamepad"></i> Roblox Studio (Lua)</div>
+        <div class="skill-item"><i class="fas fa-code"></i> VS Code</div>
+        <div class="skill-item"><i class="fab fa-discord"></i> Discord Bot Dev</div>
+    </div>
+</div>
+
+<section id="about">
+<h2 class="title">🚀 About Croxin</h2>
+
+<div class="cards">
+<div class="card tilt-card">
+<h3>🎮 Roblox Development</h3>
+<p>Roblox Studio ortamında gelişmiş Lua skriptleri, UI tasarımları ve özel oyun mekanikleri geliştiriyorum.</p>
+</div>
+
+<div class="card tilt-card">
+<h3>💻 Web Design</h3>
+<p>Modern, hızlı, SEO uyumlu ve göz alıcı animasyonlara sahip portfolyo ve topluluk siteleri tasarlıyorum.</p>
+</div>
+
+<div class="card tilt-card">
+<h3>🌐 Community Management</h3>
+<p>Büyük ölçekli Discord sunucularının altyapısını kuruyor, yönetim ekibini eğitiyor ve güvenlik botlarını entegre ediyorum.</p>
+</div>
+</div>
+</section>
+
+<section id="projects">
+<h2 class="title">⭐ Projects</h2>
+
+<!-- PROJE FİLTRELEME -->
+<div class="project-filters">
+    <button class="filter-btn active" onclick="filterProjects('all')">Tümü</button>
+    <button class="filter-btn" onclick="filterProjects('roblox')">Roblox</button>
+    <button class="filter-btn" onclick="filterProjects('web')">Web Design</button>
+    <button class="filter-btn" onclick="filterProjects('discord')">Discord</button>
+</div>
+
+<div class="cards" id="projectsGrid">
+
+<div class="card tilt-card project-card" data-category="roblox" onclick="openModal('Croxin Studio Map System', 'Roblox üzerine geliştirilmiş gelişmiş harita ve envanter yönetim sistemi. Lua dili kullanılarak sıfırdan optimize edilmiştir.')">
+<span class="badge">ROBLOX</span>
+<h3>Croxin Studio Systems</h3>
+<p>Harita, envanter ve ekonomi sistemlerini içeren özel Lua altyapısı.</p>
+</div>
+
+<div class="card tilt-card project-card" data-category="web" onclick="openModal('Developer Portfolio V2', 'Tamamen HTML5, CSS3 ve Modern JavaScript ile oluşturulmuş responsive, neon temalı geliştirici web sitesi.')">
+<span class="badge">WEB DESIGN</span>
+<h3>Personal Web Hub</h3>
+<p>Özel animasyonlu ve interaktif oyuncu/geliştirici portfolyosu.</p>
+</div>
+
+<div class="card tilt-card project-card" data-category="discord" onclick="openModal('Discord Bot & Sunucu Yönetimi', 'Rol yönetimi, otomatik kayıt ve gelişmiş güvenlik modüllerine sahip özel Discord bot altyapısı.')">
+<span class="badge">DISCORD</span>
+<h3>Discord Network Manager</h3>
+<p>Topluluk ve rol yönetimini otomatikleştiren gelişmiş Discord botları.</p>
+</div>
+
+</div>
+</section>
+
+<!-- SIK SORULAN SORULAR (FAQ) -->
+<section id="faq">
+    <h2 class="title">❓ Sık Sorulan Sorular</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Roblox veya Web projesi siparişi nasıl verebilirim?</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                Bana doğrudan Discord veya Instagram üzerindeki DM kutularından ulaşabilirsin. Proje detaylarını konuştuğumuzda fiyat ve süre teklifini iletebilirim.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Proje teslim süreleri ne kadar sürüyor?</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                Projenin kapsamına bağlı olarak basit siteler/skriptler 1-3 gün içinde, kapsamlı Roblox sistemleri ise 1 hafta içinde tamamlanmaktadır.
+            </div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-question">
+                <span>Discord sunucu kurulumu hizmeti veriyor musunuz?</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="faq-answer">
+                Evet! Özel rol yapılandırmaları, kanal düzeni, bot kurulumları ve yetkili yönetim sistemlerini eksiksiz şekilde teslim ediyorum.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- İLETİŞİM FORMU -->
+<section id="contact">
+    <h2 class="title">✉️ İletişime Geç</h2>
+    <div class="contact-container">
+        <form onsubmit="handleContact(event)">
+            <div class="form-group">
+                <label>Adınız / Rumuzunuz</label>
+                <input type="text" id="contactName" name="name" placeholder="Örn: Mehmet" required>
+            </div>
+            <div class="form-group">
+                <label>Discord Veya E-Posta Adresiniz</label>
+                <input type="text" id="contactInfo" name="contact_info" placeholder="Örn: croxin_dev" required>
+            </div>
+            <div class="form-group">
+                <label>Mesajınız</label>
+                <textarea id="contactMessage" name="message" rows="4" placeholder="Projeniz hakkında detaylar verin..." required></textarea>
+            </div>
+            <button type="submit" id="submitBtn" class="send-btn"><i class="fas fa-paper-plane"></i> Mesajı Gönder</button>
+        </form>
+    </div>
+</section>
+
+<!-- MÜZİK ÇALAR -->
+<div class="music-player">
+   <img class="cover-art" src="https://github.com/realyusufi.png" alt="Album Cover">
+    <div class="player-info">
+        <div class="song-title" id="songTitle">Croxin - Synthwave Vibe</div>
+        <div class="progress-container">
+            <span id="currentTime">0:00</span>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span id="duration">0:00</span>
+        </div>
+    </div>
+    <div class="controls">
+        <button class="control-btn" onclick="restartSong()"><i class="fas fa-step-backward"></i></button>
+        <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()"><i class="fas fa-play" id="playIcon"></i></button>
+        <button class="control-btn"><i class="fas fa-step-forward"></i></button>
+    </div>
+    
+    <div class="volume-container">
+        <button class="volume-btn" id="muteBtn" onclick="toggleMute()"><i class="fas fa-volume-high" id="volumeIcon"></i></button>
+        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8">
+    </div>
+</div>
+
+<audio id="audioPlayer" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
+
+<!-- PROJE MODAL PENCERESİ -->
+<div class="modal-overlay" id="projectModal">
+    <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        <div class="modal-title" id="modalTitle">Proje Başlığı</div>
+        <div class="modal-desc" id="modalDesc">Proje açıklaması buraya gelecek...</div>
+        <a href="https://discord.com/users/1403418770009227387" target="_blank" class="btn" style="margin:0; width:100%; text-align:center;">Detaylı Bilgi Al</a>
+    </div>
+</div>
+
+<footer>
+© 2026 Croxin • All Rights Reserved
+</footer>
+
+<script>
+// 1. ÖZEL NENON MOUSE İMLECİ (CUSTOM CURSOR)
+const cursor = document.getElementById('cursor');
+const follower = document.getElementById('follower');
+
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+    
+    setTimeout(() => {
+        follower.style.left = e.clientX + 'px';
+        follower.style.top = e.clientY + 'px';
+    }, 50);
+});
+
+// 2. PARÇACIK ARKA PLAN ANIMASYONU (CANVAS)
+const canvas = document.getElementById('particles-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const particles = [];
+const particleCount = 45;
+
+for (let i = 0; i < particleCount; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        size: Math.random() * 2 + 1
+    });
+}
+
+function drawParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#00bfff';
+    
+    particles.forEach((p, index) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+        
+        for (let j = index + 1; j < particles.length; j++) {
+            const p2 = particles[j];
+            const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+            if (dist < 120) {
+                ctx.strokeStyle = `rgba(0, 191, 255, ${1 - dist / 120})`;
+                ctx.lineWidth = 0.4;
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.stroke();
+            }
+        }
+    });
+    requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// 3. 3D TILT EFEKTİ
+document.querySelectorAll('.tilt-card').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        card.style.transform = `perspective(1000px) rotateX(${-y / 12}deg) rotateY(${x / 12}deg) translateY(-8px)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)`;
+    });
+});
+
+// 4. RENK TEMA DEĞİŞTİRİCİ
+function setTheme(theme) {
+    if (theme === 'default') document.documentElement.removeAttribute('data-theme');
+    else document.documentElement.setAttribute('data-theme', theme);
+}
+
+// 5. GİRİŞ EKRANI
+const welcomeScreen = document.getElementById('welcomeScreen');
+const enterBtn = document.getElementById('enterBtn');
+
+enterBtn.addEventListener('click', () => {
+    welcomeScreen.classList.add('hidden');
+    document.body.classList.remove('enter-locked');
+    audio.play().then(() => {
+        playIcon.className = 'fas fa-pause';
+    }).catch(err => console.log("Otomatik oynatma:", err));
+});
+
+// 6. TEKİL VE KALICI ZİYARETÇİ SAYACI
+async function updateVisitCount() {
+    const counterEl = document.getElementById('visitCount');
+    const namespace = "croxin_official_site";
+    const key = "croxin_unique_v10";
+
+    let userNumber = localStorage.getItem('croxin_visitor_no');
+
+    if (userNumber) {
+        counterEl.innerText = userNumber;
+    } else {
+        try {
+            const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up?t=${Date.now()}`);
+            const data = await response.json();
+            
+            if (data && data.count) {
+                userNumber = data.count;
+                localStorage.setItem('croxin_visitor_no', userNumber);
+                counterEl.innerText = userNumber;
+            } else {
+                counterEl.innerText = "1";
+            }
+        } catch (error) {
+            counterEl.innerText = "1";
+        }
+    }
+}
+updateVisitCount();
+
+// 7. PROJE FİLTRELEME & MODAL
+function filterProjects(category) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.querySelectorAll('.project-card').forEach(card => {
+        if (category === 'all' || card.dataset.category === category) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function openModal(title, desc) {
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalDesc').innerText = desc;
+    document.getElementById('projectModal').classList.add('active');
+}
+
+function closeModal() {
+    document.getElementById('projectModal').classList.remove('active');
+}
+
+// 8. FAQ ACCORDION
+document.querySelectorAll('.faq-question').forEach(q => {
+    q.addEventListener('click', () => {
+        const item = q.parentElement;
+        item.classList.toggle('open');
+    });
+});
+
+// 9. İLETİŞİM FORMU (Cloudflare Worker Köprüsü Entegrasyonlu)
+async function handleContact(e) {
+    e.preventDefault();
+    
+    const lastSendTime = localStorage.getItem('croxin_last_msg_time');
+    const cooldownTime = 120 * 1000; // 120 Saniye Cooldown
+    const now = Date.now();
+
+    if (lastSendTime && (now - lastSendTime < cooldownTime)) {
+        const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
+        alert(`Çok sık mesaj gönderiyorsun! Lütfen tekrar göndermek için ${remainingSeconds} saniye bekle.`);
+        return;
+    }
+
+    const name = document.getElementById('contactName').value;
+    const info = document.getElementById('contactInfo').value;
+    const message = document.getElementById('contactMessage').value;
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...`;
+
+    const discordPayload = {
+        embeds: [{
+            title: "📩 Yeni İletişim Mesajı!",
+            color: 3066993,
+            fields: [
+                { name: "👤 Gönderen:", value: name, inline: true },
+                { name: "📞 İletişim / Discord:", value: info, inline: true },
+                { name: "💬 Mesaj:", value: message, inline: false }
+            ],
+            timestamp: new Date().toISOString()
+        }]
+    };
+
+    // Oluşturduğumuz Cloudflare Worker Köprü Linkimiz
+    const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
+
+    try {
+        const response = await fetch(workerBridgeUrl, {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(discordPayload)
+        });
+
+        const sonucVerisi = await response.json();
+
+        if (response.ok && sonucVerisi.success) {
+            alert("Mesajın başarıyla Discord kanalına iletildi!");
+            e.target.reset();
+            localStorage.setItem('croxin_last_msg_time', Date.now());
+            startCooldownTimer(120);
+        } else {
+            throw new Error(sonucVerisi.error || "Bilinmeyen hata");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
+    }
+}
+
+// 120 Saniyelik Buton Geri Sayım Fonksiyonu
+function startCooldownTimer(seconds) {
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    
+    let timeLeft = seconds;
+    const timerInterval = setInterval(() => {
+        if (timeLeft > 0) {
+            submitBtn.innerHTML = `<i class="fas fa-clock"></i> Yeni Mesaj İçin Bekle (${timeLeft}s)`;
+            timeLeft--;
+        } else {
+            clearInterval(timerInterval);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
+        }
+    }, 1000);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    const lastSendTime = localStorage.getItem('croxin_last_msg_time');
+    const cooldownTime = 120 * 1000;
+    const now = Date.now();
+    
+    if (lastSendTime && (now - lastSendTime < cooldownTime)) {
+        const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
+        startCooldownTimer(remainingSeconds);
+    }
+});
+
+// 10. MENÜ KONTROLÜ
+const sideMenu = document.getElementById('sideMenu');
+const openMenuBtn = document.getElementById('openMenuBtn');
+const closeMenuBtn = document.getElementById('closeMenuBtn');
+
+function toggleMenu() {
+    sideMenu.classList.toggle('active');
+}
+
+openMenuBtn.addEventListener('click', toggleMenu);
+closeMenuBtn.addEventListener('click', toggleMenu);
+
+// 11. MÜZİK ÇALAR KONTROLLERİ
+const audio = document.getElementById('audioPlayer');
+const playBtn = document.getElementById('playBtn');
+const playIcon = document.getElementById('playIcon');
+const progressFill = document.getElementById('progressFill');
+const progressBar = document.getElementById('progressBar');
+const currentTimeEl = document.getElementById('currentTime');
+const durationEl = document.getElementById('duration');
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeIcon = document.getElementById('volumeIcon');
+
+audio.volume = 0.8;
+
+function togglePlay() {
+    if (audio.paused) {
+        audio.play();
+        playIcon.className = 'fas fa-pause';
+    } else {
+        audio.pause();
+        playIcon.className = 'fas fa-play';
+    }
+}
+
+function restartSong() { audio.currentTime = 0; }
+
+volumeSlider.addEventListener('input', (e) => {
+    audio.volume = e.target.value;
+    updateVolumeIcon();
+});
+
+function toggleMute() {
+    if (audio.volume > 0) {
+        audio.dataset.prevVolume = audio.volume;
+        audio.volume = 0;
+        volumeSlider.value = 0;
+    } else {
+        const prev = audio.dataset.prevVolume || 0.8;
+        audio.volume = prev;
+        volumeSlider.value = prev;
+    }
+    updateVolumeIcon();
+}
+
+function updateVolumeIcon() {
+    if (audio.volume == 0) volumeIcon.className = 'fas fa-volume-xmark';
+    else if (audio.volume < 0.5) volumeIcon.className = 'fas fa-volume-low';
+    else volumeIcon.className = 'fas fa-volume-high';
+}
+
+audio.addEventListener('timeupdate', () => {
+    if(audio.duration) {
+        const percent = (audio.currentTime / audio.duration) * 100;
+        progressFill.style.width = `${percent}%`;
+        
+        let curMin = Math.floor(audio.currentTime / 60);
+        let curSec = Math.floor(audio.currentTime % 60);
+        if (curSec < 10) curSec = `0${curSec}`;
+        currentTimeEl.textContent = `${curMin}:${curSec}`;
+
+        let durMin = Math.floor(audio.duration / 60);
+        let durSec = Math.floor(audio.duration % 60);
+        if (durSec < 10) durSec = `0` + durSec;
+        durationEl.textContent = `${durMin}:${durSec}`;
+    }
+});
+
+progressBar.addEventListener('click', (e) => {
+    const width = progressBar.clientWidth;
+    const clickX = e.offsetX;
+    audio.currentTime = (clickX / width) * audio.duration;
+});
+</script>
+
+    <!-- AI SOHBET WIDGET -->
+<div id="aiChatWidget" class="ai-chat-widget">
+    <!-- Açma/Kapatma Butonu -->
+    <button id="aiChatToggle" class="ai-chat-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    </button>
+
+    <!-- Sohbet Paneli -->
+    <div id="aiChatContainer" class="ai-chat-container hidden">
+        <div class="ai-chat-header">
+            <div class="ai-chat-title">
+                <span class="ai-status-dot"></span>
+                <span>Croxin AI Asistan</span>
+            </div>
+            <button id="aiChatClose" class="ai-chat-close">&times;</button>
+        </div>
+        
+        <div id="aiChatMessages" class="ai-chat-messages">
+            <div class="ai-message bot">
+                Selam! Ben senin yapay zeka asistanınım. Siteyle ilgili ya da istediğin herhangi bir konuda sana nasıl yardım edebilirim?
+            </div>
+        </div>
+
+        <div class="ai-chat-input-area">
+            <input type="text" id="aiChatInput" placeholder="Bir şeyler yaz..." autocomplete="off">
+            <button id="aiChatSend">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
             </button>
         </div>
     </div>
-
-    <!-- HAMBURGER MENÜ BUTONU -->
-    <button class="menu-btn" id="openMenuBtn"><i class="fas fa-bars"></i></button>
-
-    <!-- SAĞDAN AÇILAN PANEL -->
-    <div class="side-menu" id="sideMenu">
-        <button class="close-btn" id="closeMenuBtn"><i class="fas fa-times"></i></button>
-        
-        <div class="menu-title">Navigation</div>
-        <a href="#" onclick="toggleMenu()"><i class="fas fa-house"></i> Home</a>
-        <a href="#about" onclick="toggleMenu()"><i class="fas fa-user"></i> About</a>
-        <a href="#projects" onclick="toggleMenu()"><i class="fas fa-code"></i> Projects</a>
-        <a href="#faq" onclick="toggleMenu()"><i class="fas fa-circle-question"></i> S.S.S.</a>
-        <a href="#contact" onclick="toggleMenu()"><i class="fas fa-envelope"></i> İletişim</a>
-        
-        <div class="menu-divider"></div>
-        
-        <div class="menu-title">Socials</div>
-        <a href="https://discord.com/users/1403418770009227387" target="_blank"><i class="fab fa-discord"></i> Discord</a>
-        <a href="https://instagram.com/_gams1z" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
-    </div>
-
-    <header>
-        <img class="profile" src="https://github.com/realyusufi.png?v=2" alt="Croxin Logo">
-        <div class="logo">CROXIN</div>
-        <p class="subtitle">Roblox Developer • Web Designer • Community Manager</p>
-
-        <!-- DISCORD CANLI DURUM CARD'I -->
-        <div class="discord-status-card">
-            <div class="status-indicator" id="discordDot"></div>
-            <div class="discord-text" id="discordText">Discord: <strong>realyusufi</strong> (Bağlanıyor...)</div>
-        </div>
-
-        <!-- GÖRÜNTÜLENME SAYACI -->
-        <div class="views-counter">
-            <i class="fas fa-user-check"></i> Siz <span id="visitCount">...</span>. ziyaretçisiniz
-        </div>
-
-        <div class="buttons">
-            <a class="btn" href="https://discord.com/users/1403418770009227387" target="_blank">Discord</a>
-            <a class="btn" href="https://instagram.com/_gams1z" target="_blank">Instagram</a>
-            <a class="btn" href="#projects">Projects</a>
-        </div>
-    </header>
-
-    <!-- SKILLS MARQUEE (KAYAN TEKNOLOJİ ŞERİDİ) -->
-    <div class="marquee-container">
-        <div class="marquee-content">
-            <div class="skill-item"><i class="fab fa-html5"></i> HTML5</div>
-            <div class="skill-item"><i class="fab fa-css3-alt"></i> CSS3</div>
-            <div class="skill-item"><i class="fab fa-js"></i> JavaScript</div>
-            <div class="skill-item"><i class="fas fa-gamepad"></i> Roblox Studio (Lua)</div>
-            <div class="skill-item"><i class="fas fa-code"></i> VS Code</div>
-            <div class="skill-item"><i class="fab fa-discord"></i> Discord Bot Dev</div>
-            <!-- Sonsuz döngü için tekrar -->
-            <div class="skill-item"><i class="fab fa-html5"></i> HTML5</div>
-            <div class="skill-item"><i class="fab fa-css3-alt"></i> CSS3</div>
-            <div class="skill-item"><i class="fab fa-js"></i> JavaScript</div>
-            <div class="skill-item"><i class="fas fa-gamepad"></i> Roblox Studio (Lua)</div>
-            <div class="skill-item"><i class="fas fa-code"></i> VS Code</div>
-            <div class="skill-item"><i class="fab fa-discord"></i> Discord Bot Dev</div>
-        </div>
-    </div>
-
-    <section id="about">
-        <h2 class="title">🚀 About Croxin</h2>
-        <div class="cards">
-            <div class="card tilt-card">
-                <h3>🎮 Roblox Development</h3>
-                <p>Roblox Studio ortamında gelişmiş Lua skriptleri, UI tasarımları ve özel oyun mekanikleri geliştiriyorum.</p>
-            </div>
-            <div class="card tilt-card">
-                <h3>💻 Web Design</h3>
-                <p>Modern, hızlı, SEO uyumlu ve göz alıcı animasyonlara sahip portfolyo ve topluluk siteleri tasarlıyorum.</p>
-            </div>
-            <div class="card tilt-card">
-                <h3>🌐 Community Management</h3>
-                <p>Büyük ölçekli Discord sunucularının altyapısını kuruyor, yönetim ekibini eğitiyor ve güvenlik botlarını entegre ediyorum.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="projects">
-        <h2 class="title">⭐ Projects</h2>
-        <div class="project-filters">
-            <button class="filter-btn active" onclick="filterProjects('all')">Tümü</button>
-            <button class="filter-btn" onclick="filterProjects('roblox')">Roblox</button>
-            <button class="filter-btn" onclick="filterProjects('web')">Web Design</button>
-            <button class="filter-btn" onclick="filterProjects('discord')">Discord</button>
-        </div>
-
-        <div class="cards" id="projectsGrid">
-            <div class="card tilt-card project-card" data-category="roblox" onclick="openModal('Croxin Studio Map System', 'Roblox üzerine geliştirilmiş gelişmiş harita ve envanter yönetim sistemi. Lua dili kullanılarak sıfırdan optimize edilmiştir.')">
-                <span class="badge">ROBLOX</span>
-                <h3>Croxin Studio Systems</h3>
-                <p>Harita, envanter ve ekonomi sistemlerini içeren özel Lua altyapısı.</p>
-            </div>
-            <div class="card tilt-card project-card" data-category="web" onclick="openModal('Developer Portfolio V2', 'Tamamen HTML5, CSS3 ve Modern JavaScript ile oluşturulmuş responsive, neon temalı geliştirici web sitesi.')">
-                <span class="badge">WEB DESIGN</span>
-                <h3>Personal Web Hub</h3>
-                <p>Özel animasyonlu ve interaktif oyuncu/geliştirici portfolyosu.</p>
-            </div>
-            <div class="card tilt-card project-card" data-category="discord" onclick="openModal('Discord Bot & Sunucu Yönetimi', 'Rol yönetimi, otomatik kayıt ve gelişmiş güvenlik modüllerine sahip özel Discord bot altyapısı.')">
-                <span class="badge">DISCORD</span>
-                <h3>Discord Network Manager</h3>
-                <p>Topluluk ve rol yönetimini otomatikleştiren gelişmiş Discord botları.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- SIK SORULAN SORULAR (FAQ) -->
-    <section id="faq">
-        <h2 class="title">❓ Sık Sorulan Sorular</h2>
-        <div class="faq-container">
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Roblox veya Web projesi siparişi nasıl verebilirim?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    Bana doğrudan Discord veya Instagram üzerindeki DM kutularından ulaşabilirsin. Proje detaylarını konuştuğumuzda fiyat ve süre teklifini iletebilirim.
-                </div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Proje teslim süreleri ne kadar sürüyor?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    Projenin kapsamına bağlı olarak basit siteler/skriptler 1-3 gün içinde, kapsamlı Roblox sistemleri ise 1 hafta içinde tamamlanmaktadır.
-                </div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question">
-                    <span>Discord sunucu kurulumu hizmeti veriyor musunuz?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    Evet! Özel rol yapılandırmaları, kanal düzeni, bot kurulumları ve yetkili yönetim sistemlerini eksiksiz şekilde teslim ediyorum.
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- İLETİŞİM FORMU -->
-    <section id="contact">
-        <h2 class="title">✉️ İletişime Geç</h2>
-        <div class="contact-container">
-            <form onsubmit="handleContact(event)">
-                <div class="form-group">
-                    <label>Adınız / Rumuzunuz</label>
-                    <input type="text" id="contactName" name="name" placeholder="Örn: Mehmet" required>
-                </div>
-                <div class="form-group">
-                    <label>Discord Veya E-Posta Adresiniz</label>
-                    <input type="text" id="contactInfo" name="contact_info" placeholder="Örn: croxin_dev" required>
-                </div>
-                <div class="form-group">
-                    <label>Mesajınız</label>
-                    <textarea id="contactMessage" name="message" rows="4" placeholder="Projeniz hakkında detaylar verin..." required></textarea>
-                </div>
-                <button type="submit" id="submitBtn" class="send-btn"><i class="fas fa-paper-plane"></i> Mesajı Gönder</button>
-            </form>
-        </div>
-    </section>
-
-    <!-- MÜZİK ÇALAR -->
-    <div class="music-player">
-        <img class="cover-art" src="https://github.com/realyusufi.png?v=2" alt="Album Cover">
-        <div class="player-info">
-            <div class="song-title" id="songTitle">Croxin - Synthwave Vibe</div>
-            <div class="progress-container">
-                <span id="currentTime">0:00</span>
-                <div class="progress-bar" id="progressBar">
-                    <div class="progress-fill" id="progressFill"></div>
-                </div>
-                <span id="duration">0:00</span>
-            </div>
-        </div>
-        <div class="controls">
-            <button class="control-btn" onclick="restartSong()"><i class="fas fa-step-backward"></i></button>
-            <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()"><i class="fas fa-play" id="playIcon"></i></button>
-            <button class="control-btn"><i class="fas fa-step-forward"></i></button>
-        </div>
-        
-        <div class="volume-container">
-            <button class="volume-btn" id="muteBtn" onclick="toggleMute()"><i class="fas fa-volume-high" id="volumeIcon"></i></button>
-            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.01" value="0.8">
-        </div>
-    </div>
-
-    <audio id="audioPlayer" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"></audio>
-
-    <!-- PROJE MODAL PENCERESİ -->
-    <div class="modal-overlay" id="projectModal">
-        <div class="modal-box">
-            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-title" id="modalTitle">Proje Başlığı</div>
-            <div class="modal-desc" id="modalDesc">Proje açıklaması buraya gelecek...</div>
-            <a href="https://discord.com/users/1403418770009227387" target="_blank" class="btn" style="margin:0; width:100%; text-align:center; display:block;">Detaylı Bilgi Al</a>
-        </div>
-    </div>
-
-    <!-- AI SOHBET WIDGET -->
-    <div id="aiChatWidget" class="ai-chat-widget">
-        <button id="aiChatToggle" class="ai-chat-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        </button>
-
-        <div id="aiChatContainer" class="ai-chat-container hidden">
-            <div class="ai-chat-header">
-                <div class="ai-chat-title">
-                    <span class="ai-status-dot"></span>
-                    <span>Croxin AI Asistan</span>
-                </div>
-                <button id="aiChatClose" class="ai-chat-close">&times;</button>
-            </div>
-            
-            <div id="aiChatMessages" class="ai-chat-messages">
-                <div class="ai-message bot">
-                    Selam! Ben Croxin'in yapay zeka asistanıyım. Site, Roblox projeleri veya yazılım hakkında bana her şeyi sorabilirsin!
-                </div>
-            </div>
-
-            <div class="ai-chat-input-area">
-                <input type="text" id="aiChatInput" placeholder="Bir şeyler yaz..." autocomplete="off">
-                <button id="aiChatSend">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        © 2026 Croxin • All Rights Reserved
-    </footer>
-
-    <script>
-        // 1. ÖZEL NEON MOUSE İMLECİ
-        const cursor = document.getElementById('cursor');
-        const follower = document.getElementById('follower');
-
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-            setTimeout(() => {
-                follower.style.left = e.clientX + 'px';
-                follower.style.top = e.clientY + 'px';
-            }, 50);
-        });
-
-        // 2. PARÇACIK ARKA PLAN ANIMASYONU
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-
-        const particles = [];
-        const particleCount = 45;
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 0.6,
-                vy: (Math.random() - 0.5) * 0.6,
-                size: Math.random() * 2 + 1
-            });
-        }
-
-        function drawParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim() || '#00bfff';
-            
-            particles.forEach((p, index) => {
-                p.x += p.vx;
-                p.y += p.vy;
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-                
-                for (let j = index + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (dist < 120) {
-                        ctx.strokeStyle = `rgba(0, 191, 255, ${1 - dist / 120})`;
-                        ctx.lineWidth = 0.4;
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.stroke();
-                    }
-                }
-            });
-            requestAnimationFrame(drawParticles);
-        }
-        drawParticles();
-
-        // 3. 3D TILT EFEKTİ
-        document.querySelectorAll('.tilt-card').forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                card.style.transform = `perspective(1000px) rotateX(${-y / 12}deg) rotateY(${x / 12}deg) translateY(-8px)`;
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)`;
-            });
-        });
-
-        // 4. RENK TEMA DEĞİŞTİRİCİ
-        function setTheme(theme) {
-            if (theme === 'default') document.documentElement.removeAttribute('data-theme');
-            else document.documentElement.setAttribute('data-theme', theme);
-        }
-
-        // 5. GİRİŞ EKRANI
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const enterBtn = document.getElementById('enterBtn');
-        const audio = document.getElementById('audioPlayer');
-        const playIcon = document.getElementById('playIcon');
-
-        enterBtn.addEventListener('click', () => {
-            welcomeScreen.classList.add('hidden');
-            document.body.classList.remove('enter-locked');
-            audio.play().then(() => {
-                playIcon.className = 'fas fa-pause';
-            }).catch(err => console.log("Otomatik oynatma engellendi:", err));
-        });
-
-        // 6. TEKİL VE KALICI ZİYARETÇİ SAYACI
-        async function updateVisitCount() {
-            const counterEl = document.getElementById('visitCount');
-            const namespace = "croxin_official_site";
-            const key = "croxin_unique_v10";
-            let userNumber = localStorage.getItem('croxin_visitor_no');
-
-            if (userNumber) {
-                counterEl.innerText = userNumber;
-            } else {
-                try {
-                    const response = await fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up?t=${Date.now()}`);
-                    const data = await response.json();
-                    if (data && data.count) {
-                        userNumber = data.count;
-                        localStorage.setItem('croxin_visitor_no', userNumber);
-                        counterEl.innerText = userNumber;
-                    } else {
-                        counterEl.innerText = "1";
-                    }
-                } catch (error) {
-                    counterEl.innerText = "1";
-                }
-            }
-        }
-        updateVisitCount();
-
-        // 7. DISCORD CANLI DURUM (LANYARD)
-        async function updateDiscordStatus() {
-            try {
-                const response = await fetch('https://api.lanyard.rest/v1/users/1403418770009227387');
-                const data = await response.json();
-                if (data.success) {
-                    const user = data.data;
-                    const dot = document.getElementById('discordDot');
-                    const text = document.getElementById('discordText');
-                    
-                    let color = '#747f8d';
-                    if (user.discord_status === 'online') color = '#43b581';
-                    if (user.discord_status === 'idle') color = '#faa61a';
-                    if (user.discord_status === 'dnd') color = '#f04747';
-                    
-                    dot.style.background = color;
-                    dot.style.boxShadow = `0 0 10px ${color}`;
-                    
-                    let activityName = 'Aktif';
-                    if (user.activities && user.activities.length > 0) {
-                        activityName = user.activities[0].name;
-                    }
-                    text.innerHTML = `Discord: <strong>${user.discord_user.username}</strong> (${activityName})`;
-                }
-            } catch (err) {
-                console.log("Discord durumu alınamadı");
-            }
-        }
-        updateDiscordStatus();
-        setInterval(updateDiscordStatus, 5000);
-
-        // 8. PROJE FİLTRELEME & MODAL
-        function filterProjects(category) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            document.querySelectorAll('.project-card').forEach(card => {
-                if (category === 'all' || card.dataset.category === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-
-        function openModal(title, desc) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalDesc').innerText = desc;
-            document.getElementById('projectModal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('projectModal').classList.remove('active');
-        }
-
-        // 9. FAQ ACCORDION
-        document.querySelectorAll('.faq-question').forEach(q => {
-            q.addEventListener('click', () => {
-                const item = q.parentElement;
-                item.classList.toggle('open');
-            });
-        });
-
-        // 10. İLETİŞİM FORMU (Cloudflare Worker Entegrasyonu)
-        async function handleContact(e) {
-            e.preventDefault();
-            const lastSendTime = localStorage.getItem('croxin_last_msg_time');
-            const cooldownTime = 120 * 1000;
-            const now = Date.now();
-
-            if (lastSendTime && (now - lastSendTime < cooldownTime)) {
-                const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
-                alert(`Çok sık mesaj gönderiyorsun! Lütfen tekrar göndermek için ${remainingSeconds} saniye bekle.`);
-                return;
-            }
-
-            const name = document.getElementById('contactName').value;
-            const info = document.getElementById('contactInfo').value;
-            const message = document.getElementById('contactMessage').value;
-            const submitBtn = document.getElementById('submitBtn');
-
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...`;
-
-            const discordPayload = {
-                embeds: [{
-                    title: "📩 Yeni İletişim Mesajı!",
-                    color: 3066993,
-                    fields: [
-                        { name: "👤 Gönderen:", value: name, inline: true },
-                        { name: "📞 İletişim / Discord:", value: info, inline: true },
-                        { name: "💬 Mesaj:", value: message, inline: false }
-                    ],
-                    timestamp: new Date().toISOString()
-                }]
-            };
-
-            const workerBridgeUrl = "https://long-surf-ac45.yusufun5askeri.workers.dev/";
-
-            try {
-                const response = await fetch(workerBridgeUrl, {
-                    method: "POST",
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(discordPayload)
-                });
-                const sonucVerisi = await response.json();
-
-                if (response.ok && sonucVerisi.success) {
-                    alert("Mesajın başarıyla Discord kanalına iletildi!");
-                    e.target.reset();
-                    localStorage.setItem('croxin_last_msg_time', Date.now());
-                    startCooldownTimer(120);
-                } else {
-                    throw new Error(sonucVerisi.error || "Bilinmeyen hata");
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Bağlantı hatası oluştu! Lütfen internetini kontrol et veya biraz sonra tekrar dene.");
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
-            }
-        }
-
-        function startCooldownTimer(seconds) {
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            let timeLeft = seconds;
-            const timerInterval = setInterval(() => {
-                if (timeLeft > 0) {
-                    submitBtn.innerHTML = `<i class="fas fa-clock"></i> Yeni Mesaj İçin Bekle (${timeLeft}s)`;
-                    timeLeft--;
-                } else {
-                    clearInterval(timerInterval);
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Mesajı Gönder`;
-                }
-            }, 1000);
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const lastSendTime = localStorage.getItem('croxin_last_msg_time');
-            const cooldownTime = 120 * 1000;
-            const now = Date.now();
-            if (lastSendTime && (now - lastSendTime < cooldownTime)) {
-                const remainingSeconds = Math.ceil((cooldownTime - (now - lastSendTime)) / 1000);
-                startCooldownTimer(remainingSeconds);
-            }
-        });
-
-        // 11. MENÜ KONTROLÜ
-        const sideMenu = document.getElementById('sideMenu');
-        const openMenuBtn = document.getElementById('openMenuBtn');
-        const closeMenuBtn = document.getElementById('closeMenuBtn');
-
-        function toggleMenu() {
-            sideMenu.classList.toggle('active');
-        }
-
-        openMenuBtn.addEventListener('click', toggleMenu);
-        closeMenuBtn.addEventListener('click', toggleMenu);
-
-        // 12. MÜZİK ÇALAR KONTROLLERİ
-        const playBtn = document.getElementById('playBtn');
-        const progressFill = document.getElementById('progressFill');
-        const progressBar = document.getElementById('progressBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationEl = document.getElementById('duration');
-        const volumeSlider = document.getElementById('volumeSlider');
-        const volumeIcon = document.getElementById('volumeIcon');
-
-        audio.volume = 0.8;
-
-        function togglePlay() {
-            if (audio.paused) {
-                audio.play();
-                playIcon.className = 'fas fa-pause';
-            } else {
-                audio.pause();
-                playIcon.className = 'fas fa-play';
-            }
-        }
-
-        function restartSong() { audio.currentTime = 0; }
-
-        volumeSlider.addEventListener('input', (e) => {
-            audio.volume = e.target.value;
-            updateVolumeIcon();
-        });
-
-        function toggleMute() {
-            if (audio.volume > 0) {
-                audio.dataset.prevVolume = audio.volume;
-                audio.volume = 0;
-                volumeSlider.value = 0;
-            } else {
-                const prev = audio.dataset.prevVolume || 0.8;
-                audio.volume = prev;
-                volumeSlider.value = prev;
-            }
-            updateVolumeIcon();
-        }
-
-        function updateVolumeIcon() {
-            if (audio.volume == 0) volumeIcon.className = 'fas fa-volume-xmark';
-            else if (audio.volume < 0.5) volumeIcon.className = 'fas fa-volume-low';
-            else volumeIcon.className = 'fas fa-volume-high';
-        }
-
-        audio.addEventListener('timeupdate', () => {
-            if(audio.duration) {
-                const percent = (audio.currentTime / audio.duration) * 100;
-                progressFill.style.width = `${percent}%`;
-                
-                let curMin = Math.floor(audio.currentTime / 60);
-                let curSec = Math.floor(audio.currentTime % 60);
-                if (curSec < 10) curSec = `0${curSec}`;
-                currentTimeEl.textContent = `${curMin}:${curSec}`;
-
-                let durMin = Math.floor(audio.duration / 60);
-                let durSec = Math.floor(audio.duration % 60);
-                if (durSec < 10) durSec = `0` + durSec;
-                durationEl.textContent = `${durMin}:${durSec}`;
-            }
-        });
-
-        progressBar.addEventListener('click', (e) => {
-            const width = progressBar.clientWidth;
-            const clickX = e.offsetX;
-            audio.currentTime = (clickX / width) * audio.duration;
-        });
-
-        // 13. GERÇEK AI SOHBET WIDGET MANTIĞI (GEMINI API)
-        const chatToggle = document.getElementById('aiChatToggle');
-        const chatContainer = document.getElementById('aiChatContainer');
-        const chatClose = document.getElementById('aiChatClose');
-        const chatSend = document.getElementById('aiChatSend');
-        const chatInput = document.getElementById('aiChatInput');
-        const chatMessages = document.getElementById('aiChatMessages');
-
-        chatToggle.addEventListener('click', () => {
-            chatContainer.classList.toggle('hidden');
-        });
-
-        chatClose.addEventListener('click', () => {
-            chatContainer.classList.add('hidden');
-        });
-
-        async function handleUserMessage() {
-            const text = chatInput.value.trim();
-            if (!text) return;
-
-            // Kullanıcı mesajını ekrana ekle
-            const userMsg = document.createElement('div');
-            userMsg.className = 'ai-message user';
-            userMsg.textContent = text;
-            chatMessages.appendChild(userMsg);
-
-            chatInput.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            // Yükleniyor efekti için geçici bot mesajı
-            const botMsg = document.createElement('div');
-            botMsg.className = 'ai-message bot';
-            botMsg.textContent = "Yapay zeka düşünüyor...";
-            chatMessages.appendChild(botMsg);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            try {
-                // Not: Kendi Gemini API anahtarınızı buraya ekleyebilirsiniz veya Cloudflare Worker üzerinden güvenli çağrı yapabilirsiniz.
-                const API_KEY = "AQ.Ab8RN6IeRh0wpB7pvmsW3OLG5YjaskYhDZmTWbfrz1fvXVMiPA";
-                const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-
-                const response = await fetch(endpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        contents: [{
-    parts: [{ 
-        text: "Sen Croxin adlı geliştiricinin (yusuf) web sitesindeki akıllı yapay zeka asistanısın. Kullanıcıya kısa, kibar ve yardımcı yanıtlar ver. Kullanıcının sorusu: " + text 
-    }]
-}]
-                });
-
-                const data = await response.json();
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    botMsg.textContent = data.candidates[0].content.parts[0].text;
-                } else {
-                    botMsg.textContent = "Üzgünüm, şu anda yanıt oluşturamadım.";
-                }
-            } catch (err) {
-                botMsg.textContent = "Bağlantı hatası oluştu! Lütfen API anahtarınızı kontrol edin.";
-            }
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        chatSend.addEventListener('click', handleUserMessage);
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleUserMessage();
-        });
-    </script>
+</div>
+<script>
+const chatToggle = document.getElementById('aiChatToggle');
+const chatContainer = document.getElementById('aiChatContainer');
+const chatClose = document.getElementById('aiChatClose');
+const chatSend = document.getElementById('aiChatSend');
+const chatInput = document.getElementById('aiChatInput');
+const chatMessages = document.getElementById('aiChatMessages');
+
+chatToggle.addEventListener('click', () => {
+    chatContainer.classList.toggle('hidden');
+});
+
+chatClose.addEventListener('click', () => {
+    chatContainer.classList.add('hidden');
+});
+
+function handleUserMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    const userMsg = document.createElement('div');
+    userMsg.className = 'ai-message user';
+    userMsg.textContent = text;
+    chatMessages.appendChild(userMsg);
+
+    chatInput.value = '';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'ai-message bot';
+        botMsg.textContent = "Harika bir noktaya değindin! Bunu sitene entegre etmek için Cloudflare Worker üzerinden API bağlantısı kurabiliriz.";
+        chatMessages.appendChild(botMsg);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 1000);
+}
+
+chatSend.addEventListener('click', handleUserMessage);
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') handleUserMessage();
+});
+</script>
+
+    
 </body>
 </html>
